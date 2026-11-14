@@ -14,11 +14,6 @@ Authentication is handled by Supabase; the page does not store passwords or pers
 
 ## Publish and update the website
 
-Deploy the configured folder as a static site using Vercel or GitHub Pages. Set the deployed URL in Supabase Authentication URL Configuration. For this repository, the GitHub Actions workflow at `../.github/workflows/pages.yml` publishes this folder to GitHub Pages:
+This static site is deployed on Vercel at <https://devops-engineering-roadmap.vercel.app/> from the `DevOps Engineering Roadmap (Zero-to-Hero)` folder in `PhantomBeast-Official/JHN-Career-Roadmap`. Vercel is configured with the **Other** framework preset and no build command. Commits pushed to `main` trigger a Vercel deployment; GitHub Pages publishing is not configured.
 
-1. Push this project to `main` in `PhantomBeast-Official/JHN-Career-Roadmap`.
-2. In the repository, open **Settings → Pages** and select **GitHub Actions** as the build and deployment source if it is not already selected.
-3. Open **Actions** and wait for the **Deploy roadmap to GitHub Pages** workflow to complete.
-4. The site will be available at <https://phantombeast-official.github.io/JHN-Career-Roadmap/>.
-
-After that initial setup, every push to `main` updates the website automatically. Progress changes sync directly to Supabase and do not require a repository update.
+Progress changes sync directly to Supabase and do not require a repository update.

@@ -1,6 +1,6 @@
 # Cloud setup
 
-The tracker uses Supabase for password authentication, private cloud storage, and live updates between devices. Vercel can host the static page. No password or Supabase service-role key belongs in `index.html`.
+The tracker uses Supabase for password authentication, private cloud storage, and live updates between devices. Vercel hosts the static page. No password or Supabase service-role key belongs in `index.html`.
 
 ## 1. Create the Supabase project
 
