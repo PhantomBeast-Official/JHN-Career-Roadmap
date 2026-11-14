@@ -1,0 +1,2877 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- Chosen Palette: Warm Alabaster & Calm Slate Teal -->
+<!-- Application Structure Plan: A browser-based DevOps roadmap tracker with 13 stages, video/syllabus/lab checklists, study-hour logging, project links, capstones, certification guidance, reports, and JSON backup/restore. Progress is synced to a per-user cloud account. -->
+<!-- Visualization & Content Choices: 1) Intensive 6-Month Stage Effort -> Compare halved calendar durations across all 13 stages -> Horizontal Bar Chart (Chart.js/Canvas) -> Phase horizon toggle -> Visually demonstrates the 175-day intensive cadence (~1,925 study hours). 2) Phase Time & Hours Allocation -> Show proportion of 6-month sprint across 5 engineering phases -> Doughnut Chart (Chart.js/Canvas) -> Interactive tooltips -> Highlights balanced progression from foundations to AIOps. 3) 13-Stage Card Grid + Full Details Popup Modal -> Organize dense curriculum, Hindi video tutorials, What/Why/Scope, study hour logs, and granular checklists -> Interactive cards opening a full-featured modal with persistent localStorage ticks -> Eliminates page clutter and supports rapid daily progress logging. 4) CKA v1.37 Domain Weights -> Inform certification focus -> Polar Area Chart (Chart.js/Canvas) -> Emphasizes Troubleshooting (30%) and Cluster Arch (25%). NO SVG or Mermaid JS used anywhere. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JHN Career Roadmap &bull; DevOps Engineering Roadmap (Zero-to-Hero)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #FAF9F6;
+      color: #1E293B;
+      overflow-x: hidden;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 310px;
+      max-height: 400px;
+    }
+    @media (min-width: 768px) {
+      .chart-container {
+        height: 360px;
+      }
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #F1EFEA;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+    @keyframes shakeBox {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shakeBox 0.35s ease-in-out;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #report-modal, #report-modal * {
+        visibility: visible;
+      }
+      #report-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-teal-100 selection:text-teal-900">
+
+  <div id="app-shell" class="hidden">
+
+    <div class="bg-slate-900 text-slate-300 border-b border-slate-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex flex-wrap items-center gap-2 font-mono-code">
+          <span class="px-2 py-0.5 rounded bg-teal-500/15 text-teal-300 border border-teal-500/30 font-semibold">
+            Progress synced to cloud
+          </span>
+          <span id="profile-name" class="text-slate-400"></span>
+          <span class="text-slate-600">/</span>
+          <span class="text-white font-semibold">JHN Career Roadmap</span>
+          <span class="text-slate-600">/</span>
+          <span class="text-teal-400 font-bold">DevOps Engineering Roadmap (Zero-to-Hero)</span>
+          <span id="sprint-day-pill" class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 text-[11px]">
+            &#9679; Sprint Day 1 / 175
+          </span>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <span id="storage-status" role="status" aria-live="polite" class="hidden md:inline text-[11px] font-mono-code text-slate-400">
+            Waiting for sign-in
+          </span>
+          <button
+            type="button"
+            id="sign-out-btn"
+            class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-semibold transition cursor-pointer"
+          >
+            Sign out
+          </button>
+          <button
+            type="button"
+            id="open-report-modal-btn"
+            class="px-3 py-1 rounded-lg bg-teal-700 hover:bg-teal-600 text-white font-semibold transition cursor-pointer flex items-center gap-1.5"
+          >
+            <span>&#128202;</span>
+            <span>Progress Report &amp; Backup</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <header class="bg-white border-b border-stone-200">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 lg:py-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold tracking-wide uppercase mb-2.5">
+              <span>&#9889;</span>
+              <span>6-Month Intensive Mode &bull; 10–12+ Hours Daily &bull; Full Syllabus Preserved</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+              DevOps Engineering Roadmap (Zero-to-Hero)
+            </h1>
+            <p class="mt-2.5 text-sm sm:text-base text-slate-600 leading-relaxed">
+              Complete 13-stage serial syllabus compressed into a high-velocity <strong>175-day (~6-month)</strong> execution tracker (<strong>Nov 15, 2026 – May 8, 2027</strong>) powered by Top-1 Hindi tutorials, granular syllabus &amp; lab checklists, per-stage hour logging, and live readiness reporting.
+            </p>
+          </div>
+
+          <div class="bg-stone-50 border border-stone-200 rounded-2xl p-5 lg:w-96 shrink-0 shadow-2xs">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Overall Mastery Progress</span>
+              <span id="global-progress-percent" class="text-base font-extrabold text-teal-700 font-mono-code">0%</span>
+            </div>
+            <div class="w-full bg-stone-200 rounded-full h-3 overflow-hidden mb-3">
+              <div id="global-progress-bar" class="bg-teal-700 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs text-slate-600 pb-2.5 border-b border-stone-200">
+              <div>
+                <span class="text-slate-400 block text-[11px]">Checklist Ticks</span>
+                <strong id="global-ticks-count" class="text-slate-900 font-mono-code">0 / 0 Done</strong>
+              </div>
+              <div>
+                <span class="text-slate-400 block text-[11px]">Work-Ready Stages</span>
+                <strong id="global-stages-ready" class="text-teal-800 font-mono-code">0 / 13 Verified</strong>
+              </div>
+            </div>
+            <div class="mt-2.5 flex items-center justify-between text-[11px]">
+              <span id="global-hours-logged" class="text-slate-600 font-mono-code font-semibold">0h Logged / 1,925h Target</span>
+              <button
+                type="button"
+                id="quick-report-link"
+                class="text-teal-700 hover:text-teal-900 font-bold underline cursor-pointer"
+              >
+                Open Full Report &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 mt-7 pt-5 border-t border-stone-100">
+          <div class="bg-amber-50/60 rounded-xl p-3.5 border border-amber-200/70">
+            <div class="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Intensive Horizon</div>
+            <div class="mt-0.5 text-xl sm:text-2xl font-extrabold text-slate-900">175 Days</div>
+            <div class="text-xs text-slate-600 mt-0.5">Nov 15, 2026 – May 8, 2027 (~6 Mo)</div>
+          </div>
+          <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-200/80">
+            <div class="text-[11px] font-bold text-teal-800 uppercase tracking-wider">Daily Study Cadence</div>
+            <div class="mt-0.5 text-xl sm:text-2xl font-extrabold text-teal-800">10–12+ Hrs</div>
+            <div class="text-xs text-slate-600 mt-0.5">~1,925 hrs total (Zero syllabus cut)</div>
+          </div>
+          <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-200/80">
+            <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">2026 Year-End Target</div>
+            <div class="mt-0.5 text-xl sm:text-2xl font-extrabold text-slate-900">Stages 1–5</div>
+            <div class="text-xs text-slate-600 mt-0.5">Foundations + Full AWS by Dec 26</div>
+          </div>
+          <div class="bg-stone-50 rounded-xl p-3.5 border border-stone-200/80">
+            <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Daily Block Split</div>
+            <div class="mt-0.5 text-xl sm:text-2xl font-extrabold text-slate-900">4h / 5h / 2h</div>
+            <div class="text-xs text-slate-600 mt-0.5">Video &bull; Labs &bull; GitHub Docs</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-stone-200 shadow-2xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between gap-4 py-2.5 overflow-x-auto text-xs sm:text-sm font-semibold whitespace-nowrap">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <a href="#curriculum-tracker-section" class="px-3 py-1.5 rounded-lg bg-teal-50 text-teal-800 hover:bg-teal-100 transition">
+              1. 13-Stage Checklist Tracker
+            </a>
+            <a href="#timeline-analytics-section" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 hover:text-slate-900 transition">
+              2. 6-Month Schedule Analytics
+            </a>
+            <a href="#capstone-tracker-section" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 hover:text-slate-900 transition">
+              3. 5 Capstone Builds
+            </a>
+            <a href="#certifications-section" class="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-stone-100 hover:text-slate-900 transition">
+              4. 2026–2027 Certifications
+            </a>
+          </div>
+          <button
+            type="button"
+            id="nav-report-btn"
+            class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer shrink-0"
+          >
+            &#128203; View Executive Report
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-14">
+
+      <section id="curriculum-tracker-section" class="scroll-mt-16">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Section 01 &bull; Serial Mastery &amp; Checklist System</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">13-Stage DevOps Curriculum (Click Any Card for Full Popup)</h2>
+            <p class="mt-1.5 text-sm text-slate-600 max-w-3xl leading-relaxed">
+              Every stage retains 100% of the zero-to-hero syllabus while halving calendar days for your <strong>10–12+ hours/day</strong> sprint. Click any stage card to open its <strong>Full Details, Study Hours &amp; Checklist Popup</strong>—log your daily hours, tick off videos, syllabus concepts, and hands-on labs, save your GitHub repo link, and mark the stage <strong>Work-Ready</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-stone-200 p-4 mb-6 shadow-2xs">
+          <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" data-phase="all" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-700 text-white cursor-pointer transition">
+                All 13 Stages (175d)
+              </button>
+              <button type="button" data-phase="1" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition">
+                Phase 1: Foundations (24d)
+              </button>
+              <button type="button" data-phase="2" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition">
+                Phase 2: Cloud &amp; Docker (28d)
+              </button>
+              <button type="button" data-phase="3" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition">
+                Phase 3: CI/CD &amp; IaC (35d)
+              </button>
+              <button type="button" data-phase="4" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition">
+                Phase 4: K8s &amp; GitOps (39d)
+              </button>
+              <button type="button" data-phase="5" class="phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition">
+                Phase 5: SecOps, Obs &amp; AI (49d)
+              </button>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <select
+                id="status-filter-select"
+                class="px-3 py-2 text-xs font-semibold bg-stone-50 border border-stone-300 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+              >
+                <option value="all">Status: All Stages</option>
+                <option value="pending">Status: Not Started</option>
+                <option value="in-progress">Status: In Progress</option>
+                <option value="completed">Status: Work-Ready Verified</option>
+              </select>
+
+              <div class="relative w-full sm:w-64">
+                <input
+                  id="stage-search-input"
+                  type="text"
+                  placeholder="Search tool, topic, or creator..."
+                  class="w-full pl-8 pr-3 py-2 text-xs bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-600"
+                />
+                <span class="absolute left-2.5 top-2 text-slate-400 text-xs">&#128269;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="stages-card-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        </div>
+      </section>
+
+      <section id="timeline-analytics-section" class="scroll-mt-16">
+        <div class="mb-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Section 02 &bull; High-Velocity Calendar Math</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">6-Month Intensive Schedule &amp; Effort Breakdown (10–12+ Hrs/Day)</h2>
+          <p class="mt-1.5 text-sm text-slate-600 max-w-4xl leading-relaxed">
+            By committing <strong>10–12+ hours daily</strong> (~11 hours average) of focused video study and terminal lab execution, you compress the standard 348-day beginner timeline into <strong>175 calendar days (~1,925 intensive hours)</strong>—completing Foundations and AWS before <strong>December 31, 2026</strong> and reaching full AIOps &amp; Kubernetes v1.37 mastery by <strong>May 8, 2027</strong>.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-stone-200 p-5 sm:p-6 shadow-2xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-100">
+            <div>
+              <h3 class="text-base font-bold text-slate-900">Select Schedule View</h3>
+              <p id="horizon-description" class="text-xs text-slate-600 mt-0.5">
+                Full 175-Day (~6-Month) Intensive Roadmap: Nov 15, 2026 – May 8, 2027 across all 13 stages.
+              </p>
+            </div>
+            <div class="inline-flex rounded-xl bg-stone-100 p-1 border border-stone-200 self-start">
+              <button id="btn-horizon-full" type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-teal-700 text-white shadow-2xs transition cursor-pointer">
+                Full 6-Month Plan (175 Days)
+              </button>
+              <button id="btn-horizon-2026" type="button" class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition cursor-pointer">
+                2026 Year-End Sprint (42 Days)
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-6">
+            <div class="flex flex-col">
+              <div class="mb-2.5">
+                <h4 class="text-sm font-bold text-slate-800">Intensive Calendar Days per Stage (@ 10–12+ Hrs/Day)</h4>
+                <p class="text-xs text-slate-500">Hover any bar to inspect exact date window, intensive hours, and Hindi instructor.</p>
+              </div>
+              <div class="chart-container flex-1">
+                <canvas id="stageEffortChart"></canvas>
+              </div>
+            </div>
+
+            <div class="flex flex-col">
+              <div class="mb-2.5">
+                <h4 class="text-sm font-bold text-slate-800">Phase Time Allocation Across 175 Days</h4>
+                <p class="text-xs text-slate-500">Shows how multi-week depth is preserved for AWS, IaC, Kubernetes, and Observability.</p>
+              </div>
+              <div class="chart-container flex-1">
+                <canvas id="phaseDistributionChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="capstone-tracker-section" class="scroll-mt-16">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-5">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Section 03 &bull; Portfolio Proof of Work</span>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">5 Progressive Capstone Builds (Checkable Deliverable Tracker)</h2>
+            <p class="mt-1.5 text-sm text-slate-600 max-w-3xl leading-relaxed">
+              Check off each repository artifact as you build and push these 5 multi-tier production systems to GitHub between December 2026 and May 2027.
+            </p>
+          </div>
+        </div>
+
+        <div id="capstone-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        </div>
+      </section>
+
+      <section id="certifications-section" class="scroll-mt-16">
+        <div class="mb-5">
+          <span class="text-xs font-bold uppercase tracking-wider text-teal-700">Section 04 &bull; Certification Planning</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mt-1">2026–2027 Industry Certifications &amp; CKA v1.37 Exam Weights</h2>
+          <p class="mt-1.5 text-sm text-slate-600 max-w-4xl leading-relaxed">
+            Schedule your CKA, Terraform (004), and AWS (DVA-C03 / SAA-C03) exams after completing the corresponding hands-on stages and capstones above.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-stone-200 p-6 shadow-2xs">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teal-50 text-teal-800 border border-teal-200 mb-2">
+              Official CNCF Blueprint &bull; Kubernetes v1.37
+            </span>
+            <h3 class="text-lg font-bold text-slate-900">CKA Exam Domain Weightings</h3>
+            <p class="text-xs text-slate-500 mt-0.5 mb-3">
+              2-hour live CLI exam &bull; 15–20 tasks &bull; 66% passing score.
+            </p>
+            <div class="chart-container">
+              <canvas id="ckaWeightsChart"></canvas>
+            </div>
+          </div>
+
+          <div id="certifications-grid" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-stone-200 mt-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div class="font-mono-code">
+          jhnahid / <strong>JHN Career Roadmap</strong> / DevOps Engineering Roadmap (Zero-to-Hero)
+        </div>
+        <div>
+          6-Month Intensive Plan (Nov 15, 2026 – May 8, 2027) &bull; Progress synced to your cloud account
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <section id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 p-4">
+    <div class="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 sm:p-8 shadow-2xl">
+      <div class="text-xs font-bold uppercase tracking-wider text-teal-700">JHN Career Roadmap</div>
+      <h1 class="mt-2 text-2xl font-extrabold text-slate-900">Sign in to your tracker</h1>
+      <p class="mt-2 text-sm leading-relaxed text-slate-600">
+        Your roadmap progress is stored securely in your cloud account and syncs across your devices.
+        You’ll need to sign in again each time you open the page.
+      </p>
+
+      <form id="auth-login-form" class="mt-6 space-y-4">
+        <label class="block text-sm font-semibold text-slate-700">
+          Email
+          <input id="login-email" type="email" autocomplete="username" required
+            class="mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600" />
+        </label>
+        <label class="block text-sm font-semibold text-slate-700">
+          Password
+          <input id="login-password" type="password" autocomplete="current-password" required
+            class="mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600" />
+        </label>
+        <button type="submit" class="w-full rounded-xl bg-teal-700 px-4 py-3 text-sm font-bold text-white hover:bg-teal-800">
+          Sign in
+        </button>
+      </form>
+
+      <button id="show-signup-btn" type="button" class="mt-4 text-sm font-semibold text-teal-800 underline">
+        Create a new profile
+      </button>
+
+      <form id="auth-signup-form" class="hidden mt-5 space-y-4">
+        <label class="block text-sm font-semibold text-slate-700">
+          Profile name
+          <input id="signup-name" type="text" value="JH Nahid" autocomplete="name" required
+            class="mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600" />
+        </label>
+        <label class="block text-sm font-semibold text-slate-700">
+          Email
+          <input id="signup-email" type="email" autocomplete="email" required
+            class="mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600" />
+        </label>
+        <label class="block text-sm font-semibold text-slate-700">
+          Password (at least 8 characters)
+          <input id="signup-password" type="password" minlength="8" autocomplete="new-password" required
+            class="mt-1.5 w-full rounded-xl border border-stone-300 bg-white px-3.5 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600" />
+        </label>
+        <button type="submit" class="w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white hover:bg-slate-800">
+          Create profile
+        </button>
+      </form>
+
+      <p id="auth-message" role="status" aria-live="polite" class="mt-4 min-h-5 text-sm text-slate-600"></p>
+      <p class="mt-3 border-t border-stone-100 pt-3 text-xs leading-relaxed text-slate-500">
+        Sessions end after one hour. Cloud sync starts after the Supabase schema is installed and the site is deployed.
+      </p>
+    </div>
+  </section>
+
+  <div id="stage-detail-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-slate-950/75 backdrop-blur-xs p-3 sm:p-5">
+    <div class="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl border border-stone-200 shadow-2xl flex flex-col overflow-hidden">
+      <div id="modal-stage-header" class="px-5 sm:px-7 py-4 bg-slate-900 text-white flex items-start justify-between gap-4 shrink-0">
+      </div>
+
+      <div id="modal-stage-body" class="p-5 sm:p-7 overflow-y-auto custom-scroll space-y-6 flex-1">
+      </div>
+
+      <div id="modal-stage-footer" class="px-5 sm:px-7 py-3.5 bg-stone-50 border-t border-stone-200 flex items-center justify-between gap-3 shrink-0">
+      </div>
+    </div>
+  </div>
+
+  <div id="report-modal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-slate-950/75 backdrop-blur-xs p-3 sm:p-5">
+    <div class="bg-white w-full max-w-5xl max-h-[92vh] rounded-2xl border border-stone-200 shadow-2xl flex flex-col overflow-hidden">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between gap-4 shrink-0 no-print">
+        <div>
+          <div class="text-[11px] font-mono-code text-teal-400">LOCAL PROGRESS REPORTING &amp; BACKUP</div>
+          <h3 class="text-lg font-extrabold">JHN Career Roadmap &bull; Progress Report</h3>
+        </div>
+        <button type="button" id="close-report-modal-btn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold cursor-pointer">
+          &#10005; Close
+        </button>
+      </div>
+
+      <div id="report-modal-body" class="p-6 overflow-y-auto custom-scroll space-y-6 flex-1">
+      </div>
+
+      <div class="px-6 py-3.5 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-3 shrink-0 no-print">
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="export-json-btn" class="px-3.5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold cursor-pointer transition">
+            &#128229; Export JSON Backup
+          </button>
+          <label class="px-3.5 py-2 rounded-xl bg-white hover:bg-stone-100 text-slate-800 border border-stone-300 text-xs font-bold cursor-pointer transition">
+            &#128228; Import JSON Backup
+            <input type="file" id="import-json-input" accept=".json" class="hidden" />
+          </label>
+          <button type="button" id="print-report-btn" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold cursor-pointer transition">
+            &#128424; Print / Save PDF
+          </button>
+        </div>
+
+        <button type="button" id="reset-all-progress-btn" class="px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold cursor-pointer transition">
+          Reset All Records
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const ROADMAP_OWNER = "jhnahid";
+    const RECORD_STORAGE_KEY = "jhn_devops_roadmap_tracker_v2";
+    const SUPABASE_URL = "https://kqhmdftfsltsdkztkmwy.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_RD2LrOABsjUkJxWsO9PKwQ_0BDs8rEw";
+    const SESSION_DURATION_MS = 60 * 60 * 1000;
+    const CLOUD_TABLE = "roadmap_progress";
+    const authClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+          auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+        })
+      : null;
+
+    const ROADMAP_STAGES = [
+      {
+        id: 1,
+        phase: 1,
+        phaseLabel: "Phase 1: Unshakable Foundations",
+        window2026: true,
+        title: "Linux Operating System & Terminal Administration",
+        shortTitle: "Linux OS & Terminal",
+        window: "Nov 15 – Nov 20, 2026",
+        days: 6,
+        hours: 66,
+        instructor: "TrainWithShubham",
+        artifact: "Linux server with systemd service, LVM, and log filters",
+        primaryVideos: [
+          {
+            title: "Linux For DevOps In One Shot | Complete Beginners to Advanced Linux (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "5h 46m • 1.6M views • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=e01GGTKmtpc"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Linux for Beginners in One Video",
+            creator: "MPrashant",
+            meta: "Quick Command Drills",
+            url: "https://www.youtube.com/watch?v=Byx4sgLR88E"
+          },
+          {
+            title: "Learn Linux Volumes For DevOps in one Shot | LVM Tutorial (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "Storage & LVM Deep Dive",
+            url: "https://www.youtube.com/watch?v=Evnf2AAt7FQ"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "Major Linux distributions (Ubuntu/Debian and RHEL derivatives) and headless SSH terminal operation.",
+          "Filesystem navigation (pwd, ls, cd, cp, mv, rm, mkdir, touch) and file inspection/editing (cat, less, more, tail, vi, nano).",
+          "User privilege elevation (sudo, su, su -), ownership & permissions (chmod, chown), and process control (ps, top, kill).",
+          "systemd service & log management (systemctl, journalctl), storage monitoring (df, du, free, LVM volumes), and text-stream filtering (grep, awk, sed, sort, uniq, cut).",
+          "Foundational Linux kernel concepts, process isolation, and networking namespaces that power containers."
+        ],
+        whyLearnIt: "Most production servers and cloud workloads run on Linux, and containers rely directly on Linux kernel process isolation and networking namespaces. Without fluency in permissions, systemd services, and terminal log inspection, diagnosing downstream container or CI runner failures becomes far harder.",
+        scopeOfWork: "In cloud support and Linux administration roles, you SSH into virtual machines, manage background services via systemctl, inspect runtime logs with journalctl, configure storage volumes, patch security bugs, and extract error patterns from server logs directly in headless terminals.",
+        labs: [
+          "Provision an Ubuntu Linux VM or cloud instance and operate strictly via SSH inside a terminal rather than a GUI.",
+          "Create non-root users, test sudo vs. su - environment switching, and enforce restrictive file ownership/permissions with chmod and chown.",
+          "Manage a background service with systemctl, inspect logs via journalctl, and verify disk/memory usage with df, du, free, and LVM commands.",
+          "Filter sample application log files using piped grep, awk, sed, sort, and uniq commands to isolate specific error patterns."
+        ]
+      },
+      {
+        id: 2,
+        phase: 1,
+        phaseLabel: "Phase 1: Unshakable Foundations",
+        window2026: true,
+        title: "Computer Networking & System Design Fundamentals",
+        shortTitle: "Networking & System Design",
+        window: "Nov 21 – Nov 25, 2026",
+        days: 5,
+        hours: 55,
+        instructor: "TrainWithShubham",
+        artifact: "Nginx reverse proxy with SSL termination and load balancing",
+        primaryVideos: [
+          {
+            title: "Computer Networking & System Design For DevOps in OneShot",
+            creator: "TrainWithShubham",
+            meta: "4h 20m • 246K views • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=xN3BKHji12I"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Computer Networking Full Course in One Video [HINDI]",
+            creator: "Hindi Networking Lab",
+            meta: "Protocol Fundamentals",
+            url: "https://www.youtube.com/watch?v=sxRmNEkj974"
+          },
+          {
+            title: "Every Developer Should Know HTTP | Explained in Hindi",
+            creator: "Coder's Gyan",
+            meta: "HTTP/HTTPS Lifecycle",
+            url: "https://www.youtube.com/watch?v=6BUOiLmFEEU"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "OSI 7-layer model, IPv4 addressing, CIDR, public vs. private networking, subnets, and port mechanics.",
+          "DNS resolution hierarchy, TCP vs. UDP transport protocols, and HTTP/HTTPS request lifecycles.",
+          "SSL/TLS certificates and termination, reverse proxies (Nginx), Layer 4/7 load balancing, API gateways, CDNs, and caching.",
+          "Core network diagnostic utilities: ping, traceroute, curl, ifconfig/ip, and netstat/ss."
+        ],
+        whyLearnIt: "Modern web applications run as distributed systems where frontends, APIs, caches, and databases communicate across networks. Networking misconfigurations are one of the top causes of deployment outages, making systematic layer-by-layer debugging essential.",
+        scopeOfWork: "You configure Nginx reverse proxies and SSL/TLS termination, distribute traffic across backend instances via load balancers, secure traffic boundaries with API gateways, troubleshoot DNS or port reachability issues, and reason about scalable system topologies.",
+        labs: [
+          "Install Nginx on your Linux server and configure it as a reverse proxy routing HTTP requests to a local backend service.",
+          "Configure Nginx load balancing across multiple backend ports and add SSL/TLS termination to observe encrypted HTTPS handling.",
+          "Test connectivity, DNS lookups, and open sockets using curl, ping, traceroute, ifconfig, and netstat—intentionally breaking a port to practice debugging."
+        ]
+      },
+      {
+        id: 3,
+        phase: 1,
+        phaseLabel: "Phase 1: Unshakable Foundations",
+        window2026: true,
+        title: "Version Control & Team Workflows with Git & GitHub",
+        shortTitle: "Git & GitHub Workflows",
+        window: "Nov 26 – Nov 28, 2026",
+        days: 3,
+        hours: 33,
+        instructor: "Chai aur Code",
+        artifact: "Trunk-based repo with branch protection and PR reviews",
+        primaryVideos: [
+          {
+            title: "Complete git and Github course in Hindi",
+            creator: "Chai aur Code",
+            meta: "1.3M views • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=q8EevlEpQ2A"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "GitHub In One Shot | DevOps Engineers Git Tasks (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "DevOps Git Workflows",
+            url: "https://www.youtube.com/watch?v=AT1uxOLsCdk"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "Repository initialization, cloning, staging, atomic commits, commit history inspection, and .gitignore hygiene.",
+          "Branching, merging, rebasing, resolving merge conflicts cleanly via CLI, and Pull/Merge Request workflows.",
+          "GitHub governance: branch protection rules, required code reviews, issue tracking, and encrypted repository secrets.",
+          "Team branching strategies: comparing GitFlow vs. Trunk-Based Development for high-velocity CI/CD."
+        ],
+        whyLearnIt: "Git is the collaboration backbone of engineering teams and the single source of truth in modern GitOps workflows. Keeping both application source code and infrastructure definitions version-controlled ensures full auditability and safe rollbacks.",
+        scopeOfWork: "You enforce branch protection policies, review infrastructure and pipeline Pull Requests, manage repository secrets securely, resolve merge conflicts across shared YAML/HCL files, and maintain a public GitHub portfolio proving your hands-on work.",
+        labs: [
+          "Initialize a structured GitHub portfolio repository to house all your 2026–2027 DevOps labs and documentation.",
+          "Create two feature branches modifying the same configuration file, merge one into main, and resolve the resulting merge conflict on the second branch via CLI.",
+          "Enable GitHub branch protection rules on main requiring Pull Request reviews before merges are permitted."
+        ]
+      },
+      {
+        id: 4,
+        phase: 1,
+        phaseLabel: "Phase 1: Unshakable Foundations",
+        window2026: true,
+        title: "Shell Scripting & Automation Programming (Bash, Python & Go)",
+        shortTitle: "Bash, Python & Go Scripting",
+        window: "Nov 29 – Dec 8, 2026",
+        days: 10,
+        hours: 110,
+        instructor: "TrainWithShubham",
+        artifact: "Automated log backup cron script and Python API utility",
+        primaryVideos: [
+          {
+            title: "Shell Scripting in One Shot | 3 Live Projects For DevOps (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "242K views • Top 1 Bash Hindi Pick",
+            url: "https://www.youtube.com/watch?v=9Xl1ZTk3BQw"
+          },
+          {
+            title: "Python For DevOps | Free Workshop by TrainWithShubham (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "Top 1 DevOps Python Hindi Pick",
+            url: "https://www.youtube.com/watch?v=9ErAlY2Ifw0"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Python Crash Course in Hindi | 5 Python Projects",
+            creator: "CodeWithHarry",
+            meta: "Zero-Prior-Coding Prerequisite",
+            url: "https://www.youtube.com/watch?v=fqF9M92jzUo"
+          },
+          {
+            title: "Panic Handling in Golang (Hindi)",
+            creator: "Hindi Go Lesson",
+            meta: "Targeted Golang Concept",
+            url: "https://www.youtube.com/watch?v=ow6GxdW8ad8"
+          }
+        ],
+        gapNote: "Language Gap Note (Go/Golang): Industry roadmaps recommend Go for high-performance cloud-native tooling, but no standalone full-length Hindi Go YouTube URL was verified alongside single-topic tutorials. Master Bash and Python first, then add Go once your pipelines run.",
+        whatToLearn: [
+          "Bash scripting: variables, loops, conditionals, functions, exit status codes ($?), file manipulation, and scheduled cron jobs.",
+          "Python for DevOps: core syntax, data structures, file/stream handling, JSON & YAML parsing, and REST API consumption.",
+          "AWS cloud automation using Python's Boto3 SDK to inspect and manage cloud resources programmatically.",
+          "Foundational Go (Golang) syntax and error/panic handling for reading and extending cloud-native tools."
+        ],
+        whyLearnIt: "Automation is the heart of DevOps. Bash runs natively on every Linux server for fast system-level tasks, while Python's readable syntax and libraries (Boto3, Ansible) let you interact with cloud APIs, build custom health/logging utilities, and eliminate repetitive manual work.",
+        scopeOfWork: "You write automated server health monitors, scheduled log backup pipelines, cloud resource auditing scripts, REST API webhook integrations, and custom operational CLIs that save engineering hours.",
+        labs: [
+          "Write a Bash script that checks disk, memory, and service status, archives application logs, validates exit codes, and runs automatically via cron.",
+          "Build a Python automation script that parses JSON/YAML config files, queries an HTTP REST API, and writes structured status reports.",
+          "Extend your Python toolkit with boto3 during Stage 5 to list and audit AWS EC2 instances or S3 buckets programmatically."
+        ]
+      },
+      {
+        id: 5,
+        phase: 2,
+        phaseLabel: "Phase 2: Cloud Infrastructure & Containerization",
+        window2026: true,
+        title: "Cloud Computing Infrastructure & Identity Access (AWS)",
+        shortTitle: "AWS Cloud & IAM",
+        window: "Dec 9 – Dec 26, 2026",
+        days: 18,
+        hours: 198,
+        instructor: "MPrashant",
+        artifact: "Custom VPC with public/private subnets, NAT, and ELB",
+        primaryVideos: [
+          {
+            title: "AWS Zero to Hero in Hindi | AWS For Beginners in One Video in Hindi | AWS in One Shot",
+            creator: "MPrashant",
+            meta: "Top 1 Hindi AWS Masterclass",
+            url: "https://www.youtube.com/watch?v=N4sJj-SxX00"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "AWS IAM Lab Part-2 Hindi/Urdu",
+            creator: "Technical Guftgu",
+            meta: "IAM Roles & Policies Lab",
+            url: "https://www.youtube.com/watch?v=eLjiW6TZMKc"
+          },
+          {
+            title: "AWS CloudFront Tutorial for Beginners [HINDI]",
+            creator: "MPrashant",
+            meta: "CDN & Edge Caching",
+            url: "https://www.youtube.com/watch?v=akwAv_L1XQ4"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "Cloud service models (IaaS/PaaS/SaaS), AWS account hardening, MFA, and Billing Dashboard cost alerts.",
+          "IAM: users, groups, roles, inline vs. managed JSON policies, least-privilege enforcement, and temporary STS credentials.",
+          "VPC Networking: custom VPCs, public vs. private subnets, route tables, Internet Gateways, NAT Gateways/instances, and stateful Security Groups.",
+          "Compute & Scaling (EC2, Elastic Load Balancing, Auto Scaling Groups), Storage (S3, EBS), Databases (RDS, DynamoDB), DNS (Route 53), CDN (CloudFront), and Serverless basics (Lambda, API Gateway, Step Functions)."
+        ],
+        whyLearnIt: "Procuring physical hardware is slow and capital-intensive compared to elastic cloud infrastructure. Cloud VPC networking and IAM security are also core DevOps interview pillars because isolated private subnets and least-privilege roles protect production workloads from breaches.",
+        scopeOfWork: "You architect segmented VPC networks isolating public load balancers from private application/database tiers, govern developer and service permissions via IAM roles, configure S3/CloudFront content delivery, and enforce cloud cost controls.",
+        labs: [
+          "Create an AWS Free Tier account, enable MFA on root, create a least-privilege IAM admin user/group, and configure a Billing alarm.",
+          "Build a custom VPC with public and private subnets, route tables, an Internet Gateway, Security Groups, and a NAT Gateway/instance (tearing down paid NAT resources immediately after verification).",
+          "Deploy a web application on EC2 behind an Elastic Load Balancer with Auto Scaling, and serve static assets from S3 fronted by CloudFront."
+        ]
+      },
+      {
+        id: 6,
+        phase: 2,
+        phaseLabel: "Phase 2: Cloud Infrastructure & Containerization",
+        window2026: false,
+        title: "Containerization & Image Security with Docker",
+        shortTitle: "Docker & Image Hardening",
+        window: "Dec 27, 2026 – Jan 5, 2027",
+        days: 10,
+        hours: 110,
+        instructor: "TrainWithShubham",
+        artifact: "Multi-stage distroless 2-tier Flask and MySQL stack",
+        primaryVideos: [
+          {
+            title: "Docker In One Shot with 2 Live DevOps Projects (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "5h 07m • 687K views • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=9bSbNNH4Nqw"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Docker With AI & Security | This DevOps Project will get You Hired",
+            creator: "TrainWithShubham",
+            meta: "Container Security & Optimization",
+            url: "https://www.youtube.com/watch?v=DL2Ir4rK2jc"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "Container architecture vs. virtual machines, images vs. running containers, layer caching, and build speed optimization.",
+          "Authoring clean Dockerfiles, multi-stage builds, non-root container users, and minimal/distroless base images.",
+          "Persistent storage via Docker Volumes and bind mounts, plus container networking drivers (bridge, host, none).",
+          "Multi-container local orchestration with Docker Compose and publishing versioned images to Docker Hub or AWS ECR."
+        ],
+        whyLearnIt: "Containers package an application with its exact runtime dependencies so deployments behave identically across laptops, CI runners, and production clusters. Multi-stage and distroless builds drastically shrink image size, accelerate CI pipelines, and eliminate OS-level attack surfaces.",
+        scopeOfWork: "You containerize multi-tier applications, optimize Dockerfile layer ordering for fast builds, wire multi-service development stacks via Docker Compose, and harden production images before pushing to private registries.",
+        labs: [
+          "Containerize a two-tier Flask and MySQL application using a multi-stage Dockerfile and minimal/distroless base practices, recording the image size reduction vs. a naive single-stage build.",
+          "Orchestrate the Flask backend and MySQL database via docker-compose.yml using a custom bridge network and persistent Docker volume.",
+          "Place an Nginx reverse-proxy container in front of the Flask container and run container security checks on your built image."
+        ]
+      },
+      {
+        id: 7,
+        phase: 3,
+        phaseLabel: "Phase 3: Automation, CI/CD & Infrastructure as Code",
+        window2026: false,
+        title: "Continuous Integration & Continuous Delivery (GitHub Actions & Jenkins)",
+        shortTitle: "CI/CD (Actions & Jenkins)",
+        window: "Jan 6 – Jan 19, 2027",
+        days: 14,
+        hours: 154,
+        instructor: "TrainWithShubham",
+        artifact: "Automated lint, test, Docker build, and deploy pipelines",
+        primaryVideos: [
+          {
+            title: "GitHub Actions & DevSecOps in One Shot | Full CICD Project",
+            creator: "TrainWithShubham",
+            meta: "10+ hrs • Python, Node.js & Go Pipelines • Top 1 Pick",
+            url: "https://www.youtube.com/watch?v=Y0aKw5AfUj8"
+          },
+          {
+            title: "Jenkins In One Shot | DevOps Production CICD Pipelines [Hindi]",
+            creator: "TrainWithShubham",
+            meta: "6h 23m • 419K views • Enterprise Jenkins Pick",
+            url: "https://www.youtube.com/watch?v=XaSdKR2fOU4"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "GitHub Actions Tutorial - Deploy Node.js Application with CI CD",
+            creator: "Piyush Garg",
+            meta: "Fast Node.js Deployment Walkthrough",
+            url: "https://www.youtube.com/watch?v=y7S2oSjJ8PA"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "CI vs. CD pipeline stages: code checkout, linting, unit/integration testing, artifact packaging, and automated deployment.",
+          "GitHub Actions YAML workflows: triggers (push, pull_request, cron), jobs, steps, matrix strategies, encrypted Secrets, and self-hosted runners.",
+          "Automated Docker image building, tagging with Git commit SHAs, and pushing to Docker Hub / AWS ECR.",
+          "Enterprise Jenkins administration: Declarative Jenkinsfiles, shared libraries, credentials binding, and GitHub webhook triggers."
+        ],
+        whyLearnIt: "Automated CI/CD pipelines guarantee that every pull request is consistently linted, tested, and packaged before release—accelerating delivery velocity while eliminating risky manual deployments.",
+        scopeOfWork: "You architect modular, reusable CI/CD workflows across Python, Node.js, and Go services, manage runner infrastructure and encrypted secrets, automate container registry pushes, and maintain enterprise Jenkins pipelines.",
+        labs: [
+          "Create a .github/workflows YAML pipeline for your Stage 6 app that runs linting, executes automated tests, builds a Docker image, and pushes it to a registry using GitHub Secrets.",
+          "Configure a Continuous Deployment job in GitHub Actions that automatically deploys updated containers to an AWS EC2 host on merge to main.",
+          "Provision a Jenkins server and build a Declarative Jenkinsfile pipeline triggered by GitHub webhooks to compare server-based CI with GitHub Actions."
+        ]
+      },
+      {
+        id: 8,
+        phase: 3,
+        phaseLabel: "Phase 3: Automation, CI/CD & Infrastructure as Code",
+        window2026: false,
+        title: "Infrastructure as Code & Configuration Management (Terraform & Ansible)",
+        shortTitle: "Terraform & Ansible IaC",
+        window: "Jan 20 – Feb 9, 2027",
+        days: 21,
+        hours: 231,
+        instructor: "TrainWithShubham",
+        artifact: "Multi-env AWS infra via Terraform modules and Ansible playbooks",
+        primaryVideos: [
+          {
+            title: "Terraform In One Shot | 3 Live DevOps Projects with Notes (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "7h 21m • 329K views • Top 1 Terraform Hindi Pick",
+            url: "https://www.youtube.com/watch?v=S9mohJI_R34"
+          },
+          {
+            title: "Ansible In One Shot | Production Ready DevOps (Terraform Integration)",
+            creator: "TrainWithShubham",
+            meta: "3h 30m • Top 1 Ansible Hindi Pick",
+            url: "https://www.youtube.com/watch?v=z0BZDAtQa6E"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Ansible In One Shot | Live Projects DevOps Engineers (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "Additional Ansible Playbook Labs",
+            url: "https://www.youtube.com/watch?v=4GwafiGsTUM"
+          }
+        ],
+        gapNote: null,
+        whatToLearn: [
+          "Terraform (and OpenTofu): HCL syntax, providers, resources, data sources, dependency graphs, variables, outputs, and count/for_each loops.",
+          "Reusable Terraform modules, remote state backends (S3 + state locking / HCP Terraform), workspaces, terraform import, lifecycle rules, and drift detection.",
+          "Ansible configuration management: static/dynamic inventories, ad-hoc commands, idempotent modules, YAML playbooks, variables, facts, and roles.",
+          "End-to-end orchestration: provisioning cloud VMs with Terraform and automatically configuring OS packages and Docker via Ansible."
+        ],
+        whyLearnIt: "Manual cloud-console clicks cannot be audited, peer-reviewed, or reproduced reliably across dev, staging, and production. Terraform provisions cloud infrastructure declaratively from code, while Ansible enforces consistent post-provisioning server state.",
+        scopeOfWork: "You author version-controlled Terraform modules for multi-environment cloud infrastructure, detect and remediate configuration drift, enforce policy guardrails, and automate OS/middleware configuration across server fleets with Ansible.",
+        labs: [
+          "Recreate your Stage 5 AWS VPC, subnets, Security Groups, and EC2/ELB stack declaratively using reusable Terraform modules across dev and staging workspaces.",
+          "Configure a remote state backend and practice terraform state list, terraform show, terraform import, and manual drift remediation.",
+          "Execute Ansible playbooks against your Terraform-provisioned EC2 instances to install Docker, configure Nginx, and launch your app with zero manual SSH."
+        ]
+      },
+      {
+        id: 9,
+        phase: 4,
+        phaseLabel: "Phase 4: Cloud-Native Orchestration & GitOps",
+        window2026: false,
+        title: "Container Orchestration & Package Management (Kubernetes v1.37 & Helm)",
+        shortTitle: "Kubernetes v1.37 & Helm",
+        window: "Feb 10 – Mar 9, 2027",
+        days: 28,
+        hours: 308,
+        instructor: "TrainWithShubham",
+        artifact: "3-tier microservices app on EKS/Kubeadm via Helm",
+        primaryVideos: [
+          {
+            title: "Kubernetes In One Shot | 3 Live DevOps Projects | Beginners to Advanced",
+            creator: "TrainWithShubham",
+            meta: "11h 42m • 848K views • Top 1 K8s Hindi Pick",
+            url: "https://www.youtube.com/watch?v=W04brGNgxN4"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Kubernetes Deployment Strategies Explained (Hands-On Project)",
+            creator: "TrainWithShubham",
+            meta: "Rolling, Blue-Green & Canary",
+            url: "https://youtu.be/_T3vfkl-3Vk?si=2qWfSn65766KmXZO"
+          },
+          {
+            title: "Deploying MERN stack Application on Kubernetes using Kubeadm",
+            creator: "TrainWithShubham",
+            meta: "Multi-Node Kubeadm Cluster Lab",
+            url: "https://www.youtube.com/watch?v=h-ul8l5ekPg"
+          },
+          {
+            title: "What is HELM and HELM Chart-Hindi/Urdu | Lec-57",
+            creator: "Technical Guftgu",
+            meta: "126K views • Helm Packaging",
+            url: "https://www.youtube.com/watch?v=nH6LDrl6xpI"
+          }
+        ],
+        gapNote: "Curriculum Update Alert (Kubernetes v1.37): The CNCF CKA blueprint updated for Kubernetes v1.37 (as of Oct 2026) with deeper focus on Gateway API (GatewayClass, Gateway), Pod Security Standards (PSS replacing removed Pod Security Policies), Helm/Kustomize, and CRDs/Operators. Pair video labs with official kubernetes.io/docs Gateway API guides.",
+        whatToLearn: [
+          "Cluster architecture: HA control plane, etcd, kube-apiserver, scheduler, controller-manager, kubelet, containerd, and CNI/CSI/CRI interfaces.",
+          "Core workloads & networking: Pods, Deployments, StatefulSets, Services (ClusterIP, NodePort, LoadBalancer), CoreDNS, ConfigMaps, and Secrets.",
+          "Security & Governance: RBAC (Roles/ClusterRoles), Network Policies, Pod Security Standards (PSS restricted/baseline), resource quotas, and node affinity.",
+          "Modern routing & packaging: Gateway API (GatewayClass, Gateway, HTTPRoute) alongside Ingress controllers, Helm charts, Kustomize overlays, CRDs/Operators, kubeadm upgrades, and etcd backup/restore."
+        ],
+        whyLearnIt: "Kubernetes automates self-healing, zero-downtime rollouts, service discovery, and horizontal scaling across multi-node clusters. Deep mastery of live cluster debugging, storage, and modern Gateway API networking separates senior cloud-native engineers from beginners.",
+        scopeOfWork: "You bootstrap and upgrade kubeadm or managed AWS EKS clusters, package microservices with Helm and Kustomize, isolate multi-tenant namespaces with RBAC, Network Policies, and PSS, and troubleshoot failing pods, nodes, and storage bindings.",
+        labs: [
+          "Bootstrap a local Minikube cluster and a multi-node kubeadm or AWS EKS cluster running a modern Kubernetes release (v1.29+ / v1.37).",
+          "Package and deploy a 3-tier microservices app (Flask/MySQL or MERN) via custom Helm charts, using StatefulSets with dynamic StorageClasses for database persistence and HPA autoscaling.",
+          "Enforce namespace Pod Security Standards (restricted), apply Network Policies, expose traffic via Ingress and Gateway API, and practice live pod/service debugging."
+        ]
+      },
+      {
+        id: 10,
+        phase: 4,
+        phaseLabel: "Phase 4: Cloud-Native Orchestration & GitOps",
+        window2026: false,
+        title: "GitOps & Declarative Continuous Delivery (ArgoCD)",
+        shortTitle: "ArgoCD GitOps",
+        window: "Mar 10 – Mar 20, 2027",
+        days: 11,
+        hours: 121,
+        instructor: "TrainWithShubham",
+        artifact: "Self-healing pull-based GitOps deployment pipeline",
+        primaryVideos: [
+          {
+            title: "ArgoCD In One Shot | Full CICD Pipeline | ArgoCD & GitHub Actions (Hindi)",
+            creator: "TrainWithShubham",
+            meta: "7h 59m • 104K views • Top 1 GitOps Hindi Pick",
+            url: "https://www.youtube.com/watch?v=B0bTEeM34DU"
+          }
+        ],
+        supplementaryVideos: [],
+        gapNote: null,
+        whatToLearn: [
+          "GitOps core principles: declarative configuration, versioned Git repositories as the single source of truth, and pull-based reconciliation.",
+          "Decoupling CI (GitHub Actions building/pushing images) from CD (ArgoCD controller inside Kubernetes syncing Helm/Kustomize manifests).",
+          "ArgoCD Applications, AppProjects, automated sync policies, self-heal toggles, prune options, and progressive sync waves.",
+          "Automated configuration drift detection and instant rollback via Git revert."
+        ],
+        whyLearnIt: "Granting external CI runners raw cluster-admin credentials widens your security blast radius, and manual kubectl edits cause silent configuration drift. ArgoCD runs inside the cluster, continuously comparing live state against Git and automatically healing unauthorized changes.",
+        scopeOfWork: "You architect pull-based GitOps delivery pipelines where developers promote releases via reviewed Pull Requests while ArgoCD safely reconciles multi-environment Kubernetes clusters.",
+        labs: [
+          "Separate your Stage 9 Helm/Kubernetes manifests into a dedicated GitOps config repository and connect it to ArgoCD.",
+          "Configure your Stage 7 GitHub Actions workflow to update image tags in the GitOps repo after CI passes, verifying automatic ArgoCD rollout.",
+          "Manually delete or alter a live Deployment via kubectl and verify that ArgoCD detects the drift and self-heals back to the Git-defined state."
+        ]
+      },
+      {
+        id: 11,
+        phase: 5,
+        phaseLabel: "Phase 5: Hardening, Observability & Expert Layer",
+        window2026: false,
+        title: "DevSecOps & Software Supply Chain Security",
+        shortTitle: "DevSecOps & Vault Security",
+        window: "Mar 21 – Mar 30, 2027",
+        days: 10,
+        hours: 110,
+        instructor: "TrainWithShubham",
+        artifact: "CI gate with SonarQube, OWASP, and Trivy image scans",
+        primaryVideos: [
+          {
+            title: "DevSecOps End to End CICD Project | DevOps Engineer | SonarQube + OWASP + Trivy + Docker + Jenkins",
+            creator: "TrainWithShubham",
+            meta: "1h 27m • 79K views • Top 1 DevSecOps Hindi Pick",
+            url: "https://www.youtube.com/watch?v=84zoviSqWK0"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "GitHub Actions & DevSecOps in One Shot | Full CICD Project",
+            creator: "TrainWithShubham",
+            meta: "GitHub Actions Security Gates",
+            url: "https://www.youtube.com/watch?v=Y0aKw5AfUj8"
+          }
+        ],
+        gapNote: "Language Gap Note (HashiCorp Vault): No standalone full-length Hindi tutorial dedicated to HashiCorp Vault was identified in reviewed catalogs. Supplement directly with HashiCorp's official Vault sensitivity, Vault Radar secret-scanning, and dynamic credentials tutorials.",
+        whatToLearn: [
+          "Shift-Left security philosophy: embedding automated security verification early in every pull request and CI build.",
+          "Static Application Security Testing (SAST) and code quality gates using SonarQube.",
+          "Software Composition Analysis (SCA) for third-party dependencies using OWASP Dependency-Check.",
+          "Container image and filesystem vulnerability scanning with Trivy, secret leak detection (Vault Radar), and centralized secrets management via HashiCorp Vault."
+        ],
+        whyLearnIt: "Discovering exposed API keys, vulnerable base images, or flawed dependencies in production causes severe security breaches and costly downtime. Automated DevSecOps quality gates block insecure artifacts before they ever reach a registry or cluster.",
+        scopeOfWork: "You embed SonarQube, OWASP, and Trivy gates inside CI pipelines, eliminate hardcoded credentials using HashiCorp Vault dynamic secrets, and collaborate with security teams to harden containers and clusters.",
+        labs: [
+          "Integrate SonarQube static code analysis, OWASP dependency checks, and Trivy container image scanning into your Stage 7 CI pipeline.",
+          "Configure hard pipeline quality gates that fail the build and block registry pushes whenever critical CVEs or code smells are detected.",
+          "Deploy HashiCorp Vault (or AWS Secrets Manager) to store database credentials and inject them dynamically into Terraform or Kubernetes without committing secrets to Git."
+        ]
+      },
+      {
+        id: 12,
+        phase: 5,
+        phaseLabel: "Phase 5: Hardening, Observability & Expert Layer",
+        window2026: false,
+        title: "Full-Stack Observability (Prometheus, Grafana, ELK & OpenTelemetry)",
+        shortTitle: "Observability (Metrics/Logs/Traces)",
+        window: "Mar 31 – Apr 13, 2027",
+        days: 14,
+        hours: 154,
+        instructor: "TrainWithShubham / Bhoopesh Sharma",
+        artifact: "Prometheus, Grafana, Elastic Stack, and OpenTelemetry setup",
+        primaryVideos: [
+          {
+            title: "Easiest Prometheus & Grafana Tutorial For DevOps on Kubernetes | Observability in Hindi",
+            creator: "TrainWithShubham",
+            meta: "Metrics & Alerting • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=DXZUunEeHqM"
+          },
+          {
+            title: "ELK vs Elastic Stack with Live DevOps Project | Learn this in 2026",
+            creator: "TrainWithShubham",
+            meta: "Centralized Logging • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=bB1vHOKRag0"
+          },
+          {
+            title: "अब Logs, Metrics और Traces अलग-अलग नहीं! (OpenTelemetry Hindi)",
+            creator: "Bhoopesh Sharma",
+            meta: "Unified OpenTelemetry Collector • Top 1 Hindi Pick",
+            url: "https://www.youtube.com/watch?v=1Oo2tcQTKVk"
+          }
+        ],
+        supplementaryVideos: [],
+        gapNote: null,
+        whatToLearn: [
+          "Evolution from basic uptime monitoring to deep distributed observability across the three pillars: Metrics, Logs, and Traces.",
+          "Metrics & Alerting: Prometheus scraping architecture, PromQL queries, Alertmanager rules (high CPU/memory/error alerts), and Grafana dashboards via kube-prometheus-stack.",
+          "Centralized Logging: Elastic Stack (Elasticsearch, Logstash, Kibana, Beats) and EFK (Elasticsearch, FluentBit, Kibana) for indexing container stdout/stderr logs.",
+          "Unified Telemetry: OpenTelemetry (OTel) Collectors instrumenting and correlating infrastructure metrics, logs, and distributed microservice traces."
+        ],
+        whyLearnIt: "Basic monitoring only tells you that a service crashed; full-stack observability explains why latency spiked or errors cascaded across microservices. OpenTelemetry eliminates fragmented debugging across disconnected monitoring tools.",
+        scopeOfWork: "You deploy cluster-wide telemetry pipelines, build actionable Grafana dashboards for engineering teams, configure low-noise threshold alerts, index structured logs in Elastic Stack, and trace cross-service bottlenecks.",
+        labs: [
+          "Install the kube-prometheus-stack on your Kubernetes cluster, build a Grafana pod/node resource dashboard, and configure a sustained high-CPU alert.",
+          "Deploy an Elastic Stack (Elasticsearch, FluentBit/Logstash, Kibana) logging pipeline to index and query live container logs.",
+          "Deploy an OpenTelemetry Collector on Kubernetes to unify infrastructure metrics, logs, and application distributed traces in one pipeline."
+        ]
+      },
+      {
+        id: 13,
+        phase: 5,
+        phaseLabel: "Phase 5: Hardening, Observability & Expert Layer",
+        window2026: false,
+        title: "Expert Layer: Istio Service Mesh, SRE, Platform Engineering & AIOps",
+        shortTitle: "Istio, SRE, Platform & AIOps",
+        window: "Apr 14 – May 8, 2027",
+        days: 25,
+        hours: 275,
+        instructor: "TrainWithShubham / Indian English Supplements",
+        artifact: "Service mesh mTLS canary, SLO budget, and AI triage agent",
+        primaryVideos: [
+          {
+            title: "Build Production-Ready AI Agents for DevOps with Strands & Temporal",
+            creator: "TrainWithShubham",
+            meta: "1h 15m • Agentic AI & AIOps • Top 1 Pick",
+            url: "https://www.youtube.com/watch?v=66qtyCHyCDU"
+          }
+        ],
+        supplementaryVideos: [
+          {
+            title: "Service Mesh explained in 60 minutes | Istio mTLS and Canary Demo",
+            creator: "Abhishek Veeramalla",
+            meta: "Indian Creator • English Masterclass",
+            url: "https://www.youtube.com/watch?v=eSNetKBe7Z8"
+          },
+          {
+            title: "SRE, Platform Engineering and DevOps Career Roadmap 2026",
+            creator: "PM Techhub",
+            meta: "SRE & Platform Career Strategy",
+            url: "https://www.youtube.com/watch?v=Mk1VCc9dLts"
+          }
+        ],
+        gapNote: "Language Gap Note (Istio & SRE Math): No standalone full-length Hindi YouTube tutorials were verified for Istio Service Mesh or SRE error-budget math. Bridge both cleanly using Indian educator Abhishek Veeramalla's English Istio mTLS/Canary masterclass and PM Techhub's 2026 SRE/Platform roadmap linked above.",
+        whatToLearn: [
+          "Istio Service Mesh: control plane (istiod), Envoy sidecar proxies, automatic mutual TLS (mTLS) encryption, VirtualServices, DestinationRules, Canary traffic shifting, circuit breaking, and Kiali topology graphs.",
+          "Site Reliability Engineering (SRE): Service Level Indicators (SLIs), Service Level Objectives (SLOs), SLAs, error-budget math, toil automation, and blameless postmortems.",
+          "Platform Engineering: designing self-service Internal Developer Platforms (IDPs) and Kubernetes-native cloud provisioning with Crossplane.",
+          "AIOps & Agentic AI: running local LLMs with Ollama, wiring AI agents to Docker/Kubernetes/CI workflows via Strands, Temporal, or MCP, and enforcing rate-limiting, observability, and human-in-the-loop approval gates."
+        ],
+        whyLearnIt: "Senior DevOps, SRE, and Platform Engineers do not manually fulfill repetitive infrastructure tickets—they build self-service developer platforms, enforce zero-trust mTLS between services, govern release velocity via mathematical SLO error budgets, and deploy guarded AI co-pilots for rapid incident triage.",
+        scopeOfWork: "You govern microservice traffic and progressive canary rollouts with Istio, establish SLO error-budget policies across product squads, lead blameless incident reviews, architect IDP tooling, and deploy human-approved AI triage agents.",
+        labs: [
+          "Install Istio on your Kubernetes cluster via Helm, enforce strict mTLS between microservices, and route 10% canary traffic to a v2 deployment using VirtualService and DestinationRule while visualizing in Kiali.",
+          "Define concrete SLIs, an SLO (e.g., 99.9% availability), and an SLA for your Stage 9 app, compute the monthly error budget, and write a blameless postmortem for a simulated pod outage.",
+          "Build a local AI triage agent using Ollama and Strands/Temporal that inspects failing Docker/Kubernetes logs, summarizes root causes, and proposes remediation commands behind a human-in-the-loop approval gate."
+        ]
+      }
+    ];
+
+    const CAPSTONE_PROJECTS = [
+      {
+        id: "cap1",
+        tier: "Capstone Tier 1",
+        target: "Dec 8, 2026",
+        title: "Automated Server Guardian",
+        stages: "Stages 1–4",
+        stack: ["Ubuntu Linux", "Nginx", "SSL/TLS", "Bash", "Python", "Git"],
+        challenge: "Automates scheduled log rotation and backups via cron, monitors CPU/RAM/service health with exit-code alerts, queries REST health endpoints via Python, and serves SSL reverse-proxied traffic.",
+        readmeChecklist: [
+          "Architecture diagram showing Nginx SSL termination -> local app port",
+          "Cron schedule and Bash exit-code error handling documentation",
+          "Sample Python JSON status report output"
+        ]
+      },
+      {
+        id: "cap2",
+        tier: "Capstone Tier 2",
+        target: "Jan 5, 2027",
+        title: "Containerized Cloud Stack",
+        stages: "Stages 5–6",
+        stack: ["AWS VPC", "IAM", "EC2 & ELB", "Docker Multi-Stage", "Docker Compose"],
+        challenge: "Segments public load balancers from private application/database subnets via IAM and VPC security groups while running a hardened, minimal-footprint 2-tier Flask and MySQL stack.",
+        readmeChecklist: [
+          "VPC CIDR & subnet isolation table (Public vs. Private routing)",
+          "Before/after Docker image size comparison (Single-stage vs. Multi-stage)",
+          "IAM least-privilege policy JSON snippets"
+        ]
+      },
+      {
+        id: "cap3",
+        tier: "Capstone Tier 3",
+        target: "Feb 9, 2027",
+        title: "Automated IaC & CI/CD Stack",
+        stages: "Stages 7–8",
+        stack: ["GitHub Actions", "Jenkins", "Terraform Modules", "Ansible"],
+        challenge: "Eliminates manual AWS console clicks by provisioning multi-environment cloud infrastructure via modular Terraform and automating lint, test, image push, and Ansible configuration pipelines.",
+        readmeChecklist: [
+          "Terraform module input/output contract and remote state setup",
+          "CI/CD pipeline flow from PR lint/test to registry push and Ansible deploy",
+          "Drift detection and recovery test log"
+        ]
+      },
+      {
+        id: "cap4",
+        tier: "Capstone Tier 4",
+        target: "Mar 30, 2027",
+        title: "Hardened GitOps 3-Tier Microservices",
+        stages: "Stages 9–11",
+        stack: ["Kubernetes v1.37", "Helm", "ArgoCD", "SonarQube", "OWASP", "Trivy"],
+        challenge: "Blocks vulnerable code and container CVEs inside CI quality gates while delivering self-healing, Pod Security Standard (PSS) isolated 3-tier workloads via pull-based GitOps.",
+        readmeChecklist: [
+          "Split App-Repo vs. GitOps-Config-Repo architecture walkthrough",
+          "Trivy & SonarQube CI gate failure/pass evidence",
+          "Gateway API / NetworkPolicy / PSS namespace isolation YAML highlights"
+        ]
+      },
+      {
+        id: "cap5",
+        tier: "Capstone Tier 5",
+        target: "May 8, 2027",
+        title: "Observable AI-Assisted Platform",
+        stages: "Stages 12–13",
+        stack: ["Prometheus", "Grafana", "Elastic Stack", "OpenTelemetry", "Istio", "Ollama Agent"],
+        challenge: "Enforces mTLS canary routing via Istio, correlates metrics, logs, and traces through OpenTelemetry, tracks mathematical SLO error budgets, and triages pod failures via a human-approved AI agent.",
+        readmeChecklist: [
+          "Grafana dashboard & OpenTelemetry trace correlation screenshots",
+          "Istio VirtualService canary weight split & SLI/SLO error-budget calculation",
+          "AIOps agent prompt guardrails & human-in-the-loop approval flow"
+        ]
+      }
+    ];
+
+    const CERTIFICATIONS_DATA = [
+      {
+        code: "CKA",
+        name: "Certified Kubernetes Administrator",
+        body: "Linux Foundation / CNCF",
+        badgeColor: "bg-teal-50 text-teal-800 border-teal-200",
+        format: "2 hrs • 15–20 CLI tasks • 66% pass • 2-yr validity",
+        updates: "Tested on Kubernetes v1.37 (as of Oct 2026). Weights: Troubleshooting (30%), Cluster Arch/Install/Config (25%), Services & Networking + Gateway API (20%), Workloads & Scheduling (15%), Storage (10%).",
+        role: "Primary hands-on credential validating production Kubernetes administration and senior DevOps operations."
+      },
+      {
+        code: "KUBESTRONAUT",
+        name: "Kubestronaut / Golden Kubestronaut",
+        body: "Cloud Native Computing Foundation (CNCF)",
+        badgeColor: "bg-amber-50 text-amber-800 border-amber-200",
+        format: "5 K8s Certs (Kubestronaut) or 17 Certs (Golden)",
+        updates: "Kubestronaut requires holding active KCNA, KCSA, CKA, CKAD, and CKS simultaneously. Since June 18, 2026, passing or recertifying CKS automatically extends CKA expiry.",
+        role: "Distinguishes elite cloud-native specialists across Kubernetes architecture, development, and security."
+      },
+      {
+        code: "TERRAFORM-004",
+        name: "HashiCorp Terraform Associate (004)",
+        body: "HashiCorp",
+        badgeColor: "bg-stone-100 text-slate-800 border-stone-300",
+        format: "Objective 004 Blueprint • Proctored Exam",
+        updates: "Covers IaC workflows, remote state, dependency graphs, resources/data sources, dynamic expressions, lifecycle rules, validation checks, Vault integration, imports, workspaces, drift detection, and policies.",
+        role: "Validates enterprise multi-cloud Infrastructure as Code design and state governance."
+      },
+      {
+        code: "AWS DVA-C03 / SAA",
+        name: "AWS Certified Developer & Solutions Architect",
+        body: "Amazon Web Services (AWS)",
+        badgeColor: "bg-teal-50 text-teal-800 border-teal-200",
+        format: "DVA-C03 (Registration opened Oct 27, 2026) + SAA-C03",
+        updates: "Updated AWS Developer – Associate (DVA-C03) pairs with Solutions Architect – Associate (SAA-C03) to test IAM, VPC networking, CI/CD, containers, and serverless automation.",
+        role: "Demonstrates deep AWS platform fluency for cloud automation and CI/CD engineering."
+      }
+    ];
+
+    function getDefaultState() {
+      return {
+        owner: ROADMAP_OWNER,
+        repo: "JHN Career Roadmap",
+        subRepo: "DevOps Engineering Roadmap (Zero-to-Hero)",
+        ticks: {},
+        verifiedStages: {},
+        stageHours: {},
+        stageNotes: {},
+        stageRepos: {},
+        lastUpdated: null
+      };
+    }
+
+    function normalizeTrackerState(candidate) {
+      if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) {
+        throw new Error("Tracker data must be a JSON object.");
+      }
+
+      const stateFields = ["ticks", "verifiedStages", "stageHours", "stageNotes", "stageRepos"];
+      for (const field of stateFields) {
+        if (candidate[field] !== undefined &&
+            (!candidate[field] || typeof candidate[field] !== "object" || Array.isArray(candidate[field]))) {
+          throw new Error(`Tracker field "${field}" must be an object.`);
+        }
+      }
+
+      return {
+        ...getDefaultState(),
+        ...candidate,
+        ticks: candidate.ticks || {},
+        verifiedStages: candidate.verifiedStages || {},
+        stageHours: candidate.stageHours || {},
+        stageNotes: candidate.stageNotes || {},
+        stageRepos: candidate.stageRepos || {}
+      };
+    }
+
+    function setStorageStatus(message, failed = false) {
+      const status = document.getElementById("storage-status");
+      status.textContent = message;
+      status.className = failed
+        ? "text-[11px] font-mono-code text-rose-300"
+        : "text-[11px] font-mono-code text-slate-400";
+    }
+
+    let trackerState = getDefaultState();
+    let activeUser = null;
+    let activeSessionStartedAt = 0;
+    let sessionExpiryTimer = null;
+    let cloudSyncTimer = null;
+    let cloudSubscription = null;
+    let cloudSyncInProgress = false;
+    let lastCloudUpdatedAt = "";
+    let lastSyncedStateUpdatedAt = "";
+
+    function persistState() {
+      trackerState.lastUpdated = new Date().toISOString();
+      try {
+        if (activeUser) {
+          localStorage.setItem(`${RECORD_STORAGE_KEY}_${activeUser.id}`, JSON.stringify(trackerState));
+        }
+      } catch (error) {
+        console.error("Could not cache roadmap progress in this browser.", error);
+      }
+      if (activeUser) scheduleCloudSync();
+    }
+
+    function showAuthMessage(message, failed = false) {
+      const el = document.getElementById("auth-message");
+      el.textContent = message;
+      el.className = failed
+        ? "mt-4 min-h-5 text-sm text-rose-700"
+        : "mt-4 min-h-5 text-sm text-slate-600";
+    }
+
+    function scheduleCloudSync() {
+      window.clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = window.setTimeout(() => {
+        cloudSyncTimer = null;
+        syncCloudProgress();
+      }, 500);
+    }
+
+    async function syncCloudProgress() {
+      if (!activeUser || !authClient) return true;
+      if (cloudSyncInProgress) {
+        scheduleCloudSync();
+        return false;
+      }
+
+      cloudSyncInProgress = true;
+      const userId = activeUser.id;
+      const snapshot = JSON.parse(JSON.stringify(trackerState));
+      let synced = false;
+      setStorageStatus("Syncing progress…");
+      try {
+        const { data, error } = await authClient
+          .from(CLOUD_TABLE)
+          .upsert(
+            { user_id: userId, state: snapshot, updated_at: new Date().toISOString() },
+            { onConflict: "user_id" }
+          )
+          .select("updated_at")
+          .single();
+        if (error) throw error;
+        if (activeUser && activeUser.id === userId) {
+          lastCloudUpdatedAt = data.updated_at;
+          lastSyncedStateUpdatedAt = snapshot.lastUpdated;
+          setStorageStatus("Progress synced to cloud");
+        }
+        synced = true;
+      } catch (error) {
+        console.error("Could not sync roadmap progress to the cloud.", error);
+        setStorageStatus("Cloud sync failed · check connection", true);
+      } finally {
+        cloudSyncInProgress = false;
+        if (activeUser && activeUser.id === userId &&
+            trackerState.lastUpdated !== snapshot.lastUpdated) {
+          scheduleCloudSync();
+        }
+      }
+      return synced;
+    }
+
+    function cacheUserProgress(userId) {
+      try {
+        localStorage.setItem(`${RECORD_STORAGE_KEY}_${userId}`, JSON.stringify(trackerState));
+      } catch (error) {
+        console.error("Could not cache roadmap progress in this browser.", error);
+      }
+    }
+
+    function refreshDashboardFromCloud() {
+      updateGlobalHeaderKPIs();
+      renderStagesGrid();
+      renderCapstones();
+      if (!document.getElementById("stage-detail-modal").classList.contains("hidden")) {
+        renderStageModalContent(currentModalStageId);
+      }
+      if (!document.getElementById("report-modal").classList.contains("hidden")) {
+        openReportModal();
+      }
+    }
+
+    function subscribeToCloudProgress(userId) {
+      if (cloudSubscription) authClient.removeChannel(cloudSubscription);
+      cloudSubscription = authClient
+        .channel(`roadmap-progress-${userId}`)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: CLOUD_TABLE, filter: `user_id=eq.${userId}` },
+          (payload) => {
+            const remote = payload.new;
+            if (!remote || !remote.state || cloudSyncTimer || cloudSyncInProgress) return;
+            if (Date.parse(remote.updated_at) <= Date.parse(lastCloudUpdatedAt)) return;
+            try {
+              trackerState = normalizeTrackerState(remote.state);
+              lastCloudUpdatedAt = remote.updated_at;
+              lastSyncedStateUpdatedAt = trackerState.lastUpdated;
+              cacheUserProgress(userId);
+              setStorageStatus("Live progress update received");
+              refreshDashboardFromCloud();
+            } catch (error) {
+              console.error("Could not apply a live roadmap update.", error);
+              setStorageStatus("Could not apply live update", true);
+            }
+          }
+        )
+        .subscribe((status) => {
+          if (status === "CHANNEL_ERROR" || status === "TIMED_OUT") {
+            setStorageStatus("Live sync unavailable · saving still works", true);
+          }
+        });
+    }
+
+    async function loadCloudProgress(user) {
+      setStorageStatus("Loading cloud progress…");
+      const { data, error } = await authClient
+        .from(CLOUD_TABLE)
+        .select("state, updated_at")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+
+      if (data) {
+        trackerState = normalizeTrackerState(data.state);
+        lastCloudUpdatedAt = data.updated_at;
+      } else {
+        trackerState = getDefaultState();
+        try {
+          const legacySaved = localStorage.getItem(RECORD_STORAGE_KEY);
+          if (legacySaved) trackerState = normalizeTrackerState(JSON.parse(legacySaved));
+        } catch (legacyError) {
+          console.error("Could not migrate legacy browser progress.", legacyError);
+        }
+        trackerState.lastUpdated = new Date().toISOString();
+        lastCloudUpdatedAt = "";
+      }
+
+      cacheUserProgress(user.id);
+      const { data: savedRow, error: saveError } = await authClient
+        .from(CLOUD_TABLE)
+        .upsert(
+          {
+            user_id: user.id,
+            state: trackerState,
+            updated_at: lastCloudUpdatedAt || new Date().toISOString()
+          },
+          { onConflict: "user_id" }
+        )
+        .select("updated_at")
+        .single();
+      if (saveError) throw saveError;
+      lastCloudUpdatedAt = savedRow.updated_at;
+      lastSyncedStateUpdatedAt = trackerState.lastUpdated;
+    }
+
+    function startSessionExpiry() {
+      window.clearTimeout(sessionExpiryTimer);
+      activeSessionStartedAt = Date.now();
+      sessionExpiryTimer = window.setTimeout(() => {
+        lockTracker("Your one-hour session has expired. Please sign in again.");
+      }, SESSION_DURATION_MS);
+    }
+
+    async function unlockTracker(session) {
+      activeUser = session.user;
+      startSessionExpiry();
+      try {
+        await loadCloudProgress(activeUser);
+        document.getElementById("profile-name").textContent =
+          (activeUser.user_metadata && activeUser.user_metadata.display_name) || activeUser.email;
+        document.getElementById("login-password").value = "";
+        document.getElementById("auth-screen").classList.add("hidden");
+        document.getElementById("app-shell").classList.remove("hidden");
+        showAuthMessage("");
+        initializeDashboard();
+        subscribeToCloudProgress(activeUser.id);
+        setStorageStatus("Progress synced to cloud");
+      } catch (error) {
+        console.error("Could not load the cloud roadmap profile.", error);
+        await lockTracker("Could not load your cloud progress. Check the setup and try again.", true);
+      }
+    }
+
+    async function lockTracker(message = "", failed = false) {
+      let syncFailed = false;
+      if (activeUser) {
+        if (cloudSyncTimer) {
+          window.clearTimeout(cloudSyncTimer);
+          cloudSyncTimer = null;
+        }
+        let attempts = 0;
+        while (cloudSyncInProgress && attempts < 200) {
+          await new Promise((resolve) => window.setTimeout(resolve, 50));
+          attempts++;
+        }
+        if (cloudSyncTimer) {
+          window.clearTimeout(cloudSyncTimer);
+          cloudSyncTimer = null;
+        }
+        if (trackerState.lastUpdated !== lastSyncedStateUpdatedAt) {
+          syncFailed = !(await syncCloudProgress());
+        }
+      }
+      window.clearTimeout(sessionExpiryTimer);
+      window.clearTimeout(cloudSyncTimer);
+      cloudSyncTimer = null;
+      if (cloudSubscription && authClient) {
+        await authClient.removeChannel(cloudSubscription);
+        cloudSubscription = null;
+      }
+      if (authClient) {
+        const { error } = await authClient.auth.signOut({ scope: "local" });
+        if (error) console.error("Could not clear the local cloud session.", error);
+      }
+      activeUser = null;
+      activeSessionStartedAt = 0;
+      trackerState = getDefaultState();
+      document.getElementById("app-shell").classList.add("hidden");
+      document.getElementById("auth-screen").classList.remove("hidden");
+      document.getElementById("login-password").value = "";
+      document.getElementById("signup-password").value = "";
+      document.getElementById("auth-login-form").classList.remove("hidden");
+      document.getElementById("auth-signup-form").classList.add("hidden");
+      document.getElementById("show-signup-btn").classList.remove("hidden");
+      document.getElementById("profile-name").textContent = "";
+      if (message) {
+        const finalMessage = syncFailed
+          ? `${message} Your latest changes may not have synced.`
+          : message;
+        showAuthMessage(finalMessage, failed || syncFailed);
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      if (!authClient) {
+        showAuthMessage("Cloud login is not configured. Complete the Supabase setup guide first.", true);
+        return;
+      }
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+      try {
+        const { data, error } = await authClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        await unlockTracker(data.session);
+      } catch (error) {
+        console.error("Could not sign in to the roadmap.", error);
+        showAuthMessage(error.message || "Sign-in failed. Check your connection and try again.", true);
+      }
+    }
+
+    async function handleSignup(event) {
+      event.preventDefault();
+      if (!authClient) {
+        showAuthMessage("Cloud login is not configured. Complete the Supabase setup guide first.", true);
+        return;
+      }
+      const name = document.getElementById("signup-name").value.trim();
+      const email = document.getElementById("signup-email").value.trim();
+      const password = document.getElementById("signup-password").value;
+      try {
+        const { data, error } = await authClient.auth.signUp({
+          email,
+          password,
+          options: { data: { display_name: name } }
+        });
+        if (error) throw error;
+        if (data.session) {
+          await unlockTracker(data.session);
+        } else {
+          document.getElementById("login-email").value = email;
+          document.getElementById("auth-signup-form").classList.add("hidden");
+          document.getElementById("auth-login-form").classList.remove("hidden");
+          document.getElementById("show-signup-btn").classList.remove("hidden");
+          showAuthMessage("Profile created. Check your email to confirm it, then sign in.");
+        }
+      } catch (error) {
+        console.error("Could not create the roadmap profile.", error);
+        showAuthMessage(error.message || "Profile creation failed. Check your connection and try again.", true);
+      }
+    }
+
+    let activePhaseFilter = "all";
+    let activeStatusFilter = "all";
+    let searchQuery = "";
+    let activeHorizon = "full";
+    let currentModalStageId = 1;
+    let confirmResetArmed = false;
+
+    let stageEffortChartInstance = null;
+    let phaseDistributionChartInstance = null;
+    let ckaWeightsChartInstance = null;
+
+    function computeSprintDayStatus() {
+      const start = new Date("2026-11-15T00:00:00");
+      const now = new Date();
+      const diffMs = now.getTime() - start.getTime();
+      const dayNum = Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+      if (dayNum < 1) {
+        return `Starts Nov 15, 2026`;
+      }
+      if (dayNum > 175) {
+        return `Sprint Complete (175d)`;
+      }
+      return `Sprint Day ${dayNum} / 175`;
+    }
+
+    function getStageChecklistKeys(stage) {
+      const keys = [];
+      stage.primaryVideos.forEach((_, i) => keys.push(`s${stage.id}-pv-${i}`));
+      stage.supplementaryVideos.forEach((_, i) => keys.push(`s${stage.id}-sv-${i}`));
+      stage.whatToLearn.forEach((_, i) => keys.push(`s${stage.id}-sy-${i}`));
+      stage.labs.forEach((_, i) => keys.push(`s${stage.id}-lb-${i}`));
+      return keys;
+    }
+
+    function getStageStats(stage) {
+      const keys = getStageChecklistKeys(stage);
+      const total = keys.length;
+      let done = 0;
+      keys.forEach((k) => {
+        if (trackerState.ticks[k]) done++;
+      });
+      const isVerified = Boolean(trackerState.verifiedStages[stage.id]);
+      const loggedHrs = Number(trackerState.stageHours[stage.id] || 0);
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      let status = "pending";
+      if (isVerified) {
+        status = "completed";
+      } else if (done > 0 || loggedHrs > 0) {
+        status = "in-progress";
+      }
+      return { total, done, pct, isVerified, status, loggedHrs };
+    }
+
+    function getGlobalStats() {
+      let totalTicks = 0;
+      let doneTicks = 0;
+      let verifiedStagesCount = 0;
+      let actualLoggedHours = 0;
+
+      let totalVideos = 0;
+      let doneVideos = 0;
+      let totalSyllabus = 0;
+      let doneSyllabus = 0;
+      let totalLabs = 0;
+      let doneLabs = 0;
+
+      ROADMAP_STAGES.forEach((stage) => {
+        const st = getStageStats(stage);
+        totalTicks += st.total;
+        doneTicks += st.done;
+        if (st.isVerified) verifiedStagesCount++;
+        actualLoggedHours += st.loggedHrs;
+
+        stage.primaryVideos.forEach((_, i) => {
+          totalVideos++;
+          if (trackerState.ticks[`s${stage.id}-pv-${i}`]) doneVideos++;
+        });
+        stage.supplementaryVideos.forEach((_, i) => {
+          totalVideos++;
+          if (trackerState.ticks[`s${stage.id}-sv-${i}`]) doneVideos++;
+        });
+        stage.whatToLearn.forEach((_, i) => {
+          totalSyllabus++;
+          if (trackerState.ticks[`s${stage.id}-sy-${i}`]) doneSyllabus++;
+        });
+        stage.labs.forEach((_, i) => {
+          totalLabs++;
+          if (trackerState.ticks[`s${stage.id}-lb-${i}`]) doneLabs++;
+        });
+      });
+
+      let totalCapItems = 0;
+      let doneCapItems = 0;
+      CAPSTONE_PROJECTS.forEach((cap) => {
+        cap.readmeChecklist.forEach((_, idx) => {
+          totalCapItems++;
+          if (trackerState.ticks[`${cap.id}-item-${idx}`]) doneCapItems++;
+        });
+      });
+
+      const grandTotal = totalTicks + totalCapItems;
+      const grandDone = doneTicks + doneCapItems;
+      const overallPct = grandTotal > 0 ? Math.round((grandDone / grandTotal) * 100) : 0;
+
+      return {
+        grandTotal,
+        grandDone,
+        overallPct,
+        verifiedStagesCount,
+        actualLoggedHours,
+        totalVideos,
+        doneVideos,
+        totalSyllabus,
+        doneSyllabus,
+        totalLabs,
+        doneLabs,
+        totalCapItems,
+        doneCapItems
+      };
+    }
+
+    function updateGlobalHeaderKPIs() {
+      const stats = getGlobalStats();
+      document.getElementById("sprint-day-pill").innerHTML = `&#9679; ${computeSprintDayStatus()}`;
+      document.getElementById("global-progress-percent").textContent = `${stats.overallPct}%`;
+      document.getElementById("global-progress-bar").style.width = `${stats.overallPct}%`;
+      document.getElementById("global-ticks-count").textContent = `${stats.grandDone} / ${stats.grandTotal} Done`;
+      document.getElementById("global-stages-ready").textContent = `${stats.verifiedStagesCount} / 13 Verified`;
+      document.getElementById("global-hours-logged").textContent = `${stats.actualLoggedHours.toLocaleString()}h Logged / 1,925h Target`;
+    }
+
+    function renderStagesGrid() {
+      const grid = document.getElementById("stages-card-grid");
+      const query = searchQuery.toLowerCase().trim();
+
+      const filtered = ROADMAP_STAGES.filter((stage) => {
+        if (activePhaseFilter !== "all" && String(stage.phase) !== activePhaseFilter) {
+          return false;
+        }
+        const st = getStageStats(stage);
+        if (activeStatusFilter !== "all" && st.status !== activeStatusFilter) {
+          return false;
+        }
+        if (!query) return true;
+        const blob = [
+          stage.title,
+          stage.shortTitle,
+          stage.instructor,
+          stage.artifact,
+          trackerState.stageNotes[stage.id] || "",
+          ...stage.whatToLearn,
+          ...stage.primaryVideos.map((v) => v.title + " " + v.creator)
+        ]
+          .join(" ")
+          .toLowerCase();
+        return blob.includes(query);
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-2xl border border-stone-200 p-8 text-center text-sm text-slate-500">
+            No stages match your current filter. Reset the phase/status filter or clear your search query.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered
+        .map((stage) => {
+          const st = getStageStats(stage);
+          const hasNotesOrRepo = Boolean((trackerState.stageNotes[stage.id] || "").trim() || (trackerState.stageRepos[stage.id] || "").trim());
+          const statusBadge = st.isVerified
+            ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">&#10003; Work-Ready</span>`
+            : st.done > 0 || st.loggedHrs > 0
+            ? `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">&#9889; In Progress (${st.pct}%)</span>`
+            : `<span class="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-stone-100 text-slate-600 border border-stone-200">Pending</span>`;
+
+          const cardBorder = st.isVerified
+            ? "border-emerald-300 bg-emerald-50/15"
+            : st.done > 0 || st.loggedHrs > 0
+            ? "border-teal-300 bg-white"
+            : "border-stone-200 bg-white";
+
+          return `
+            <div class="rounded-2xl border ${cardBorder} p-5 shadow-2xs hover:shadow-md transition flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-2.5">
+                  <span class="text-xs font-mono-code font-bold px-2.5 py-0.5 rounded-lg bg-slate-900 text-white">
+                    Stage ${stage.id} &bull; ${stage.days}d (${st.loggedHrs}/${stage.hours}h)
+                  </span>
+                  ${statusBadge}
+                </div>
+
+                <div class="flex items-center justify-between gap-2 mb-1">
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700">
+                    ${stage.phaseLabel}
+                  </span>
+                  ${hasNotesOrRepo ? `<span class="text-[11px] font-mono-code text-slate-500" title="Lab notes or repo saved">&#128221; Notes</span>` : ""}
+                </div>
+
+                <h3 class="text-base sm:text-lg font-extrabold text-slate-900 leading-snug">
+                  ${stage.shortTitle}
+                </h3>
+                <div class="mt-1 text-xs font-mono-code text-slate-500">
+                  &#128197; ${stage.window}
+                </div>
+
+                <p class="mt-2.5 text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                  <strong>Target Build:</strong> ${stage.artifact}
+                </p>
+
+                <div class="mt-3 pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-slate-600">
+                  <span class="truncate max-w-[175px]">&#127909; <strong>${stage.instructor}</strong></span>
+                  <span class="font-mono-code font-bold text-slate-800">${st.done}/${st.total} Ticks</span>
+                </div>
+
+                <div class="w-full bg-stone-200 rounded-full h-2 overflow-hidden mt-2">
+                  <div class="${st.isVerified ? "bg-emerald-600" : "bg-teal-700"} h-2 rounded-full transition-all duration-300" style="width: ${st.pct}%"></div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-stone-100 flex items-center gap-2">
+                <button
+                  type="button"
+                  data-open-stage="${stage.id}"
+                  class="open-stage-modal-btn flex-1 py-2.5 px-3 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold transition cursor-pointer text-center"
+                >
+                  Open Details &amp; Checklist
+                </button>
+                <button
+                  type="button"
+                  data-quick-verify="${stage.id}"
+                  title="Toggle Stage Work-Ready Sign-Off"
+                  class="quick-verify-stage-btn px-3 py-2.5 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                    st.isVerified
+                      ? "bg-emerald-600 border-emerald-600 text-white"
+                      : "bg-stone-50 border-stone-300 text-slate-700 hover:bg-stone-100"
+                  }"
+                >
+                  ${st.isVerified ? "&#10003; Verified" : "&#9744; Mark Ready"}
+                </button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+
+      grid.querySelectorAll(".open-stage-modal-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.getAttribute("data-open-stage"));
+          openStageModal(id);
+        });
+      });
+
+      grid.querySelectorAll(".quick-verify-stage-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.getAttribute("data-quick-verify"));
+          toggleStageVerified(id);
+        });
+      });
+    }
+
+    function toggleStageVerified(stageId) {
+      const stage = ROADMAP_STAGES.find((s) => s.id === stageId);
+      if (!stage) return;
+      const currentlyVerified = Boolean(trackerState.verifiedStages[stageId]);
+      if (!currentlyVerified) {
+        trackerState.verifiedStages[stageId] = new Date().toISOString();
+        getStageChecklistKeys(stage).forEach((k) => {
+          trackerState.ticks[k] = true;
+        });
+        if (!trackerState.stageHours[stageId] || Number(trackerState.stageHours[stageId]) === 0) {
+          trackerState.stageHours[stageId] = stage.hours;
+        }
+      } else {
+        delete trackerState.verifiedStages[stageId];
+      }
+      persistState();
+      updateGlobalHeaderKPIs();
+      renderStagesGrid();
+      if (!document.getElementById("stage-detail-modal").classList.contains("hidden") && currentModalStageId === stageId) {
+        renderStageModalContent(stageId);
+      }
+    }
+
+    function openStageModal(stageId) {
+      currentModalStageId = stageId;
+      renderStageModalContent(stageId);
+      document.getElementById("stage-detail-modal").classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeStageModal() {
+      document.getElementById("stage-detail-modal").classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    function renderStageModalContent(stageId) {
+      const stage = ROADMAP_STAGES.find((s) => s.id === stageId) || ROADMAP_STAGES[0];
+      const st = getStageStats(stage);
+      const savedRepo = trackerState.stageRepos[stage.id] || "";
+      const savedNotes = trackerState.stageNotes[stage.id] || "";
+
+      const headerEl = document.getElementById("modal-stage-header");
+      headerEl.innerHTML = `
+        <div>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-mono-code text-teal-400 mb-1">
+            <span>STAGE ${stage.id} OF 13</span>
+            <span>&bull;</span>
+            <span>${stage.window} (${stage.days} Days @ 10–12+h/day = ~${stage.hours} Hrs)</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700">${st.pct}% Checked</span>
+          </div>
+          <h3 class="text-lg sm:text-xl font-extrabold text-white leading-snug">${stage.title}</h3>
+        </div>
+        <button
+          type="button"
+          id="close-stage-modal-btn"
+          class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold shrink-0 cursor-pointer"
+        >
+          &#10005; Close
+        </button>
+      `;
+
+      const primaryVidsHtml = stage.primaryVideos
+        .map((vid, idx) => {
+          const key = `s${stage.id}-pv-${idx}`;
+          const checked = Boolean(trackerState.ticks[key]);
+          return `
+            <div class="p-3.5 rounded-xl border ${checked ? "bg-emerald-50/60 border-emerald-200" : "bg-teal-50/70 border-teal-200"} flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <label class="flex items-start gap-3 cursor-pointer flex-1">
+                <input
+                  type="checkbox"
+                  data-tick-key="${key}"
+                  ${checked ? "checked" : ""}
+                  class="modal-tick-cb mt-1 h-4 w-4 rounded border-stone-300 text-teal-700 focus:ring-teal-600 cursor-pointer"
+                />
+                <div>
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-teal-800 block">
+                    &#9654; Top-1 Recommended Hindi Video &bull; ${vid.creator}
+                  </span>
+                  <span class="font-bold text-xs sm:text-sm text-slate-900 ${checked ? "line-through text-slate-500" : ""}">
+                    ${vid.title}
+                  </span>
+                  <span class="block text-[11px] text-slate-600 mt-0.5">${vid.meta}</span>
+                </div>
+              </label>
+              <a
+                href="${vid.url}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="px-3.5 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold shrink-0 text-center transition"
+              >
+                Watch on YouTube &#8599;
+              </a>
+            </div>
+          `;
+        })
+        .join("");
+
+      const suppVidsHtml =
+        stage.supplementaryVideos.length > 0
+          ? `
+          <div class="mt-2.5 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            ${stage.supplementaryVideos
+              .map((vid, idx) => {
+                const key = `s${stage.id}-sv-${idx}`;
+                const checked = Boolean(trackerState.ticks[key]);
+                return `
+                  <div class="p-3 rounded-xl border ${checked ? "bg-emerald-50/50 border-emerald-200" : "bg-stone-50 border-stone-200"} flex items-start justify-between gap-2">
+                    <label class="flex items-start gap-2.5 cursor-pointer flex-1">
+                      <input
+                        type="checkbox"
+                        data-tick-key="${key}"
+                        ${checked ? "checked" : ""}
+                        class="modal-tick-cb mt-0.5 h-4 w-4 rounded border-stone-300 text-teal-700 focus:ring-teal-600 cursor-pointer"
+                      />
+                      <div>
+                        <span class="text-xs font-bold text-slate-800 block leading-snug ${checked ? "line-through text-slate-500" : ""}">
+                          ${vid.title}
+                        </span>
+                        <span class="text-[11px] text-slate-500 block mt-0.5">${vid.creator} &bull; ${vid.meta}</span>
+                      </div>
+                    </label>
+                    <a
+                      href="${vid.url}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-xs font-bold text-teal-700 hover:text-teal-900 shrink-0 px-1.5 py-0.5"
+                    >
+                      &#8599;
+                    </a>
+                  </div>
+                `;
+              })
+              .join("")}
+          </div>
+        `
+          : "";
+
+      const gapHtml = stage.gapNote
+        ? `
+          <div class="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 leading-relaxed">
+            <strong>&#9888; Curriculum &amp; Language Note:</strong> ${stage.gapNote.replace(/^[^:]+:\s*/, "")}
+          </div>
+        `
+        : "";
+
+      const syllabusChecklistHtml = stage.whatToLearn
+        .map((topic, idx) => {
+          const key = `s${stage.id}-sy-${idx}`;
+          const checked = Boolean(trackerState.ticks[key]);
+          return `
+            <label class="flex items-start gap-3 p-3 rounded-xl border transition cursor-pointer ${
+              checked ? "bg-emerald-50/60 border-emerald-200" : "bg-stone-50/70 border-stone-200 hover:bg-stone-100/70"
+            }">
+              <input
+                type="checkbox"
+                data-tick-key="${key}"
+                ${checked ? "checked" : ""}
+                class="modal-tick-cb mt-0.5 h-4 w-4 rounded border-stone-300 text-teal-700 focus:ring-teal-600 cursor-pointer"
+              />
+              <span class="text-xs sm:text-sm leading-relaxed ${checked ? "line-through text-slate-500" : "text-slate-800"}">
+                ${topic}
+              </span>
+            </label>
+          `;
+        })
+        .join("");
+
+      const labsChecklistHtml = stage.labs
+        .map((lab, idx) => {
+          const key = `s${stage.id}-lb-${idx}`;
+          const checked = Boolean(trackerState.ticks[key]);
+          return `
+            <label class="flex items-start gap-3 p-3.5 rounded-xl border transition cursor-pointer ${
+              checked ? "bg-emerald-50/70 border-emerald-200" : "bg-amber-50/30 border-amber-200/80 hover:bg-amber-50/60"
+            }">
+              <input
+                type="checkbox"
+                data-tick-key="${key}"
+                ${checked ? "checked" : ""}
+                class="modal-tick-cb mt-0.5 h-4 w-4 rounded border-stone-300 text-teal-700 focus:ring-teal-600 cursor-pointer"
+              />
+              <span class="text-xs sm:text-sm leading-relaxed ${checked ? "line-through text-slate-500" : "text-slate-800"}">
+                <strong class="font-mono-code text-xs text-amber-900 mr-1">Lab ${idx + 1}:</strong> ${lab}
+              </span>
+            </label>
+          `;
+        })
+        .join("");
+
+      const bodyEl = document.getElementById("modal-stage-body");
+      bodyEl.innerHTML = `
+        <div class="p-4 rounded-2xl border ${
+          st.isVerified ? "bg-emerald-50 border-emerald-300" : "bg-stone-50 border-stone-200"
+        } space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider ${st.isVerified ? "text-emerald-800" : "text-slate-600"}">
+                Stage Completion Status: ${st.done} / ${st.total} Checklist Items (${st.pct}%)
+              </div>
+              <p class="text-xs text-slate-600 mt-0.5">
+                Once you can execute the labs and apply these skills in real work, tick the sign-off button on the right.
+              </p>
+            </div>
+            <button
+              type="button"
+              id="modal-verify-stage-btn"
+              class="px-4 py-2.5 rounded-xl text-xs font-extrabold shrink-0 transition cursor-pointer ${
+                st.isVerified
+                  ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs"
+                  : "bg-slate-900 hover:bg-slate-800 text-white"
+              }"
+            >
+              ${st.isVerified ? "&#10003; Verified &amp; Work-Ready (Click to Unmark)" : "&#9744; Mark Stage Learned &amp; Work-Ready"}
+            </button>
+          </div>
+
+          <div class="pt-3 border-t border-stone-200/80 grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div class="bg-white p-3 rounded-xl border border-stone-200">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-600">&#9201; Intensive Study Hours Logged</span>
+                <span class="text-xs font-mono-code font-bold text-teal-800">${st.loggedHrs} / ${stage.hours} Hrs</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" data-add-hrs="1" class="modal-add-hrs-btn px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-teal-100 text-slate-800 text-xs font-mono-code font-bold cursor-pointer">+1h</button>
+                <button type="button" data-add-hrs="2" class="modal-add-hrs-btn px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-teal-100 text-slate-800 text-xs font-mono-code font-bold cursor-pointer">+2h</button>
+                <button type="button" data-add-hrs="5" class="modal-add-hrs-btn px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-teal-100 text-slate-800 text-xs font-mono-code font-bold cursor-pointer">+5h</button>
+                <button type="button" data-add-hrs="11" class="modal-add-hrs-btn px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-mono-code font-bold cursor-pointer">+11h (Full Day)</button>
+                <input
+                  id="modal-custom-hours-input"
+                  type="number"
+                  min="0"
+                  max="999"
+                  step="0.5"
+                  value="${st.loggedHrs}"
+                  aria-label="Set exact hours logged"
+                  class="w-20 ml-auto px-2 py-1 text-xs font-mono-code bg-stone-50 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                />
+              </div>
+            </div>
+
+            <div class="bg-white p-3 rounded-xl border border-stone-200">
+              <label for="modal-stage-repo-input" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                &#128279; GitHub Lab Folder / Proof-of-Work URL
+              </label>
+              <input
+                id="modal-stage-repo-input"
+                type="url"
+                value="${savedRepo.replace(/"/g, "&quot;")}"
+                placeholder="https://github.com/jhnahid/JHN-Career-Roadmap/tree/main/stage-${stage.id}"
+                class="w-full px-2.5 py-1.5 text-xs font-mono-code bg-stone-50 border border-stone-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5">
+            1. Video Instruction Checklist (Watch &amp; Take Terminal Notes)
+          </h4>
+          <div class="space-y-2.5">
+            ${primaryVidsHtml}
+            ${suppVidsHtml}
+            ${gapHtml}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+            <div class="text-xs font-extrabold uppercase tracking-wider text-teal-800 mb-1.5">&#128161; Why Learn It</div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${stage.whyLearnIt}</p>
+          </div>
+          <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+            <div class="text-xs font-extrabold uppercase tracking-wider text-amber-800 mb-1.5">&#128188; Scope of Work After Learning</div>
+            <p class="text-xs sm:text-sm text-slate-700 leading-relaxed">${stage.scopeOfWork}</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5">
+            2. Technical Syllabus Checklist ("What to Learn" — Tick Each Mastered Concept)
+          </h4>
+          <div class="space-y-2">
+            ${syllabusChecklistHtml}
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2.5">
+            3. Real-Time Implementation Checklist ("How to Implement" — Tick Each Verified Lab)
+          </h4>
+          <div class="space-y-2">
+            ${labsChecklistHtml}
+          </div>
+        </div>
+
+        <div>
+          <label for="modal-stage-notes-textarea" class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+            4. Personal CLI Commands, Troubleshooting Log &amp; Revision Notes (Auto-Saved)
+          </label>
+          <textarea
+            id="modal-stage-notes-textarea"
+            rows="3"
+            placeholder="Record key CLI commands, errors resolved, or interview takeaways for Stage ${stage.id}..."
+            class="w-full p-3 text-xs font-mono-code bg-stone-50 border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-600"
+          >${savedNotes}</textarea>
+        </div>
+      `;
+
+      const footerEl = document.getElementById("modal-stage-footer");
+      footerEl.innerHTML = `
+        <button
+          type="button"
+          id="modal-prev-stage"
+          ${stage.id === 1 ? "disabled" : ""}
+          class="px-4 py-2 rounded-xl border border-stone-300 bg-white text-xs font-bold text-slate-700 hover:bg-stone-100 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+        >
+          &larr; Stage ${Math.max(1, stage.id - 1)}
+        </button>
+
+        <span class="text-xs font-mono-code font-bold text-slate-600">
+          Stage ${stage.id} / 13 &bull; ${st.pct}% Checked &bull; ${st.loggedHrs}h Logged
+        </span>
+
+        <button
+          type="button"
+          id="modal-next-stage"
+          ${stage.id === ROADMAP_STAGES.length ? "disabled" : ""}
+          class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+        >
+          Stage ${Math.min(13, stage.id + 1)} &rarr;
+        </button>
+      `;
+
+      document.getElementById("close-stage-modal-btn").addEventListener("click", closeStageModal);
+
+      document.getElementById("modal-verify-stage-btn").addEventListener("click", () => {
+        toggleStageVerified(stage.id);
+      });
+
+      bodyEl.querySelectorAll(".modal-add-hrs-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const delta = Number(btn.getAttribute("data-add-hrs"));
+          const current = Number(trackerState.stageHours[stage.id] || 0);
+          trackerState.stageHours[stage.id] = Math.round((current + delta) * 10) / 10;
+          persistState();
+          updateGlobalHeaderKPIs();
+          renderStagesGrid();
+          renderStageModalContent(stage.id);
+        });
+      });
+
+      document.getElementById("modal-custom-hours-input").addEventListener("change", (e) => {
+        const val = Math.max(0, Number(e.target.value) || 0);
+        trackerState.stageHours[stage.id] = val;
+        persistState();
+        updateGlobalHeaderKPIs();
+        renderStagesGrid();
+        renderStageModalContent(stage.id);
+      });
+
+      document.getElementById("modal-stage-repo-input").addEventListener("input", (e) => {
+        trackerState.stageRepos[stage.id] = e.target.value;
+        persistState();
+        renderStagesGrid();
+      });
+
+      document.getElementById("modal-stage-notes-textarea").addEventListener("input", (e) => {
+        trackerState.stageNotes[stage.id] = e.target.value;
+        persistState();
+        renderStagesGrid();
+      });
+
+      bodyEl.querySelectorAll(".modal-tick-cb").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+          const key = e.target.getAttribute("data-tick-key");
+          if (e.target.checked) {
+            trackerState.ticks[key] = true;
+          } else {
+            delete trackerState.ticks[key];
+            delete trackerState.verifiedStages[stage.id];
+          }
+          persistState();
+          updateGlobalHeaderKPIs();
+          renderStagesGrid();
+          renderStageModalContent(stage.id);
+        });
+      });
+
+      const prevBtn = document.getElementById("modal-prev-stage");
+      if (prevBtn && stage.id > 1) {
+        prevBtn.addEventListener("click", () => openStageModal(stage.id - 1));
+      }
+
+      const nextBtn = document.getElementById("modal-next-stage");
+      if (nextBtn && stage.id < ROADMAP_STAGES.length) {
+        nextBtn.addEventListener("click", () => openStageModal(stage.id + 1));
+      }
+    }
+
+    function renderCapstones() {
+      const grid = document.getElementById("capstone-grid");
+      grid.innerHTML = CAPSTONE_PROJECTS.map((cap) => {
+        let doneCount = 0;
+        cap.readmeChecklist.forEach((_, idx) => {
+          if (trackerState.ticks[`${cap.id}-item-${idx}`]) doneCount++;
+        });
+        const allDone = doneCount === cap.readmeChecklist.length;
+
+        return `
+          <div class="bg-white rounded-2xl border ${allDone ? "border-emerald-300" : "border-stone-200"} p-5 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2.5">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                  ${cap.tier} &bull; ${cap.target}
+                </span>
+                <span class="text-xs font-mono-code font-bold ${allDone ? "text-emerald-700" : "text-slate-500"}">
+                  ${doneCount}/${cap.readmeChecklist.length} Done
+                </span>
+              </div>
+              <h3 class="text-base sm:text-lg font-extrabold text-slate-900">${cap.title}</h3>
+              <div class="text-[11px] font-mono-code text-teal-700 font-semibold mt-0.5">${cap.stages}</div>
+              <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+                ${cap.challenge}
+              </p>
+              <div class="mt-3 flex flex-wrap gap-1.5">
+                ${cap.stack
+                  .map(
+                    (tech) => `
+                    <span class="px-2 py-0.5 rounded-md bg-stone-100 border border-stone-200 text-[11px] font-mono-code text-slate-700">
+                      ${tech}
+                    </span>
+                  `
+                  )
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3.5 border-t border-stone-100">
+              <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                Deliverable Checklist (Tick When Pushed)
+              </div>
+              <div class="space-y-1.5">
+                ${cap.readmeChecklist
+                  .map((item, idx) => {
+                    const key = `${cap.id}-item-${idx}`;
+                    const checked = Boolean(trackerState.ticks[key]);
+                    return `
+                      <label class="flex items-start gap-2 text-xs cursor-pointer p-1.5 rounded-lg hover:bg-stone-50">
+                        <input
+                          type="checkbox"
+                          data-cap-tick="${key}"
+                          ${checked ? "checked" : ""}
+                          class="cap-tick-cb mt-0.5 h-3.5 w-3.5 rounded border-stone-300 text-teal-700 focus:ring-teal-600 cursor-pointer"
+                        />
+                        <span class="${checked ? "line-through text-slate-400" : "text-slate-700"}">${item}</span>
+                      </label>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      grid.querySelectorAll(".cap-tick-cb").forEach((cb) => {
+        cb.addEventListener("change", (e) => {
+          const key = e.target.getAttribute("data-cap-tick");
+          if (e.target.checked) {
+            trackerState.ticks[key] = true;
+          } else {
+            delete trackerState.ticks[key];
+          }
+          persistState();
+          updateGlobalHeaderKPIs();
+          renderCapstones();
+        });
+      });
+    }
+
+    function renderCertifications() {
+      const grid = document.getElementById("certifications-grid");
+      grid.innerHTML = CERTIFICATIONS_DATA.map(
+        (cert) => `
+        <div class="bg-white rounded-2xl border border-stone-200 p-5 shadow-2xs flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded-md text-xs font-mono-code font-bold border ${cert.badgeColor}">
+                ${cert.code}
+              </span>
+              <span class="text-[11px] font-semibold text-slate-500">${cert.body}</span>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900">${cert.name}</h3>
+            <div class="mt-1 text-xs font-mono-code text-teal-800">${cert.format}</div>
+            <p class="mt-2.5 text-xs text-slate-600 leading-relaxed">
+              <strong>2026–2027 Verified Updates:</strong> ${cert.updates}
+            </p>
+          </div>
+          <div class="mt-3.5 pt-3 border-t border-stone-100 text-xs text-slate-700">
+            <strong>Strategic Role:</strong> ${cert.role}
+          </div>
+        </div>
+      `
+      ).join("");
+    }
+
+    function openReportModal() {
+      confirmResetArmed = false;
+      const resetBtn = document.getElementById("reset-all-progress-btn");
+      resetBtn.textContent = "Reset All Records";
+      resetBtn.className = "px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold cursor-pointer transition";
+
+      const stats = getGlobalStats();
+      const body = document.getElementById("report-modal-body");
+      const nowStr = new Date().toLocaleString();
+      const lastSavedStr = trackerState.lastUpdated
+        ? new Date(trackerState.lastUpdated).toLocaleString()
+        : "No edits recorded yet";
+
+      const tableRows = ROADMAP_STAGES.map((stage) => {
+        const st = getStageStats(stage);
+        const repoUrl = (trackerState.stageRepos[stage.id] || "").trim();
+        const statusBadge = st.isVerified
+          ? `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Work-Ready</span>`
+          : st.done > 0 || st.loggedHrs > 0
+          ? `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">In Progress</span>`
+          : `<span class="px-2 py-0.5 rounded bg-stone-100 text-slate-500">Pending</span>`;
+        const verifiedDate = trackerState.verifiedStages[stage.id]
+          ? new Date(trackerState.verifiedStages[stage.id]).toLocaleDateString()
+          : "—";
+
+        return `
+          <tr class="border-b border-stone-100 text-xs">
+            <td class="py-2.5 px-3 font-mono-code font-bold text-slate-700">S${stage.id}</td>
+            <td class="py-2.5 px-3 font-semibold text-slate-900">
+              ${stage.shortTitle}
+              ${repoUrl ? `<a href="${repoUrl}" target="_blank" rel="noopener noreferrer" class="ml-1.5 text-[11px] font-mono-code text-teal-700 underline">[Repo &#8599;]</a>` : ""}
+            </td>
+            <td class="py-2.5 px-3 font-mono-code text-slate-500">${stage.window}</td>
+            <td class="py-2.5 px-3 font-mono-code font-semibold text-slate-800">${st.done}/${st.total} (${st.pct}%)</td>
+            <td class="py-2.5 px-3 font-mono-code text-slate-700">${st.loggedHrs} / ${stage.hours}h</td>
+            <td class="py-2.5 px-3">${statusBadge}</td>
+            <td class="py-2.5 px-3 font-mono-code text-slate-500">${verifiedDate}</td>
+          </tr>
+        `;
+      }).join("");
+
+      body.innerHTML = `
+        <div class="p-4 rounded-2xl bg-stone-50 border border-stone-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <div class="text-xs font-mono-code text-slate-500">
+              Owner: <strong class="text-slate-900">jhnahid</strong> &bull; Repo: <strong class="text-slate-900">JHN Career Roadmap</strong>
+            </div>
+            <div class="text-sm font-extrabold text-teal-800 mt-0.5">
+              Sub-Repo: DevOps Engineering Roadmap (Zero-to-Hero) &bull; ${computeSprintDayStatus()}
+            </div>
+          </div>
+          <div class="text-[11px] font-mono-code text-slate-500 sm:text-right">
+            <div>Report Generated: ${nowStr}</div>
+            <div>Last Record Save: ${lastSavedStr}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="p-3.5 rounded-xl bg-teal-50/70 border border-teal-200">
+            <div class="text-[11px] font-bold uppercase text-teal-800">Overall Readiness</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${stats.overallPct}%</div>
+            <div class="text-[11px] text-slate-600">${stats.grandDone} of ${stats.grandTotal} total items</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-emerald-50/70 border border-emerald-200">
+            <div class="text-[11px] font-bold uppercase text-emerald-800">Work-Ready Stages</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${stats.verifiedStagesCount} / 13</div>
+            <div class="text-[11px] text-slate-600">Signed-off engineering stages</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200">
+            <div class="text-[11px] font-bold uppercase text-amber-800">Hands-On Labs</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${stats.doneLabs} / ${stats.totalLabs}</div>
+            <div class="text-[11px] text-slate-600">Terminal &amp; cloud labs verified</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200">
+            <div class="text-[11px] font-bold uppercase text-slate-600">Logged Study Hours</div>
+            <div class="text-2xl font-extrabold text-slate-900 mt-0.5">${stats.actualLoggedHours.toLocaleString()}h</div>
+            <div class="text-[11px] text-slate-600">Out of 1,925h (6-mo pace)</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 text-center text-xs">
+          <div class="p-3 rounded-xl bg-white border border-stone-200">
+            <div class="text-slate-500">Hindi &amp; Supp. Videos</div>
+            <div class="font-mono-code font-extrabold text-sm text-slate-900 mt-0.5">${stats.doneVideos} / ${stats.totalVideos} Watched</div>
+          </div>
+          <div class="p-3 rounded-xl bg-white border border-stone-200">
+            <div class="text-slate-500">Syllabus Concepts</div>
+            <div class="font-mono-code font-extrabold text-sm text-slate-900 mt-0.5">${stats.doneSyllabus} / ${stats.totalSyllabus} Mastered</div>
+          </div>
+          <div class="p-3 rounded-xl bg-white border border-stone-200">
+            <div class="text-slate-500">Capstone Deliverables</div>
+            <div class="font-mono-code font-extrabold text-sm text-slate-900 mt-0.5">${stats.doneCapItems} / ${stats.totalCapItems} Pushed</div>
+          </div>
+        </div>
+
+        <div class="border border-stone-200 rounded-xl overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-stone-100 text-[11px] font-bold uppercase tracking-wider text-slate-600 border-b border-stone-200">
+                <th class="py-2.5 px-3">ID</th>
+                <th class="py-2.5 px-3">Engineering Stage</th>
+                <th class="py-2.5 px-3">6-Mo Target Window</th>
+                <th class="py-2.5 px-3">Checklist</th>
+                <th class="py-2.5 px-3">Hours</th>
+                <th class="py-2.5 px-3">Status</th>
+                <th class="py-2.5 px-3">Verified On</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${tableRows}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      document.getElementById("report-modal").classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    }
+
+    function closeReportModal() {
+      document.getElementById("report-modal").classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    function wrapLabel(str, maxLen = 16) {
+      if (!str || str.length <= maxLen) return str;
+      const words = str.split(" ");
+      const lines = [];
+      let currentLine = "";
+      words.forEach((word) => {
+        if ((currentLine + " " + word).trim().length <= maxLen) {
+          currentLine = (currentLine + " " + word).trim();
+        } else {
+          if (currentLine) lines.push(currentLine);
+          currentLine = word;
+        }
+      });
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    }
+
+    function initCharts() {
+      const effortCtx = document.getElementById("stageEffortChart").getContext("2d");
+      const phaseCtx = document.getElementById("phaseDistributionChart").getContext("2d");
+      const ckaCtx = document.getElementById("ckaWeightsChart").getContext("2d");
+
+      const stagesToPlot =
+        activeHorizon === "2026" ? ROADMAP_STAGES.filter((s) => s.window2026) : ROADMAP_STAGES;
+
+      const effortLabels = stagesToPlot.map((s) => wrapLabel(`S${s.id}: ${s.shortTitle}`, 18));
+      const effortValues = stagesToPlot.map((s) => s.days);
+      const effortColors = stagesToPlot.map((s) =>
+        s.window2026 ? "#B45309" : s.phase === 4 ? "#0F766E" : s.phase === 5 ? "#115E59" : "#0284C7"
+      );
+
+      if (stageEffortChartInstance) {
+        stageEffortChartInstance.destroy();
+      }
+
+      stageEffortChartInstance = new Chart(effortCtx, {
+        type: "bar",
+        data: {
+          labels: effortLabels,
+          datasets: [
+            {
+              label: "Intensive Study Days",
+              data: effortValues,
+              backgroundColor: effortColors,
+              borderRadius: 6,
+              barPercentage: 0.72
+            }
+          ]
+        },
+        options: {
+          indexAxis: "y",
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => {
+                  const st = stagesToPlot[items[0].dataIndex];
+                  return `Stage ${st.id}: ${st.title}`;
+                },
+                label: (ctx) => {
+                  const st = stagesToPlot[ctx.dataIndex];
+                  return [
+                    `Intensive Duration: ${st.days} days (~${st.hours} hrs @ 10–12h/day)`,
+                    `Target Window: ${st.window}`,
+                    `Instructor: ${st.instructor}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              grid: { color: "#F1EFEA" },
+              ticks: { font: { size: 11 }, color: "#64748B" },
+              title: {
+                display: true,
+                text: "Calendar Days (@ 10–12+ Hours/Day)",
+                font: { size: 11, weight: "bold" },
+                color: "#475569"
+              }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { size: 10, weight: "600" }, color: "#334155" }
+            }
+          }
+        }
+      });
+
+      if (phaseDistributionChartInstance) {
+        phaseDistributionChartInstance.destroy();
+      }
+
+      const phaseLabels =
+        activeHorizon === "2026"
+          ? [
+              wrapLabel("Stage 1: Linux OS (6d)", 16),
+              wrapLabel("Stage 2: Networking (5d)", 16),
+              wrapLabel("Stage 3: Git & GitHub (3d)", 16),
+              wrapLabel("Stage 4: Scripting (10d)", 16),
+              wrapLabel("Stage 5: AWS Cloud (18d)", 16)
+            ]
+          : [
+              wrapLabel("Phase 1: Foundations (24d)", 16),
+              wrapLabel("Phase 2: Cloud & Docker (28d)", 16),
+              wrapLabel("Phase 3: CI/CD & IaC (35d)", 16),
+              wrapLabel("Phase 4: K8s & GitOps (39d)", 16),
+              wrapLabel("Phase 5: SecOps/Obs/AI (49d)", 16)
+            ];
+
+      const phaseData = activeHorizon === "2026" ? [6, 5, 3, 10, 18] : [24, 28, 35, 39, 49];
+      const phasePalette =
+        activeHorizon === "2026"
+          ? ["#B45309", "#D97706", "#0F766E", "#0284C7", "#1E293B"]
+          : ["#B45309", "#0284C7", "#0F766E", "#115E59", "#334155"];
+
+      phaseDistributionChartInstance = new Chart(phaseCtx, {
+        type: "doughnut",
+        data: {
+          labels: phaseLabels,
+          datasets: [
+            {
+              data: phaseData,
+              backgroundColor: phasePalette,
+              borderColor: "#FFFFFF",
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "58%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: {
+                boxWidth: 12,
+                padding: 10,
+                font: { size: 11, weight: "600" },
+                color: "#334155"
+              }
+            },
+            tooltip: {
+              callbacks: {
+                title: (items) => {
+                  const lbl = items[0].label;
+                  return Array.isArray(lbl) ? lbl.join(" ") : lbl;
+                },
+                label: (ctx) => {
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  const val = ctx.parsed;
+                  const pct = Math.round((val / total) * 100);
+                  return ` ${val} days / ~${val * 11} hrs (${pct}% of view)`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      if (!ckaWeightsChartInstance) {
+        ckaWeightsChartInstance = new Chart(ckaCtx, {
+          type: "polarArea",
+          data: {
+            labels: [
+              wrapLabel("Troubleshooting (30%)", 16),
+              wrapLabel("Cluster Arch & Install (25%)", 16),
+              wrapLabel("Services & Gateway API (20%)", 16),
+              wrapLabel("Workloads & Scheduling (15%)", 16),
+              wrapLabel("Storage & Volumes (10%)", 16)
+            ],
+            datasets: [
+              {
+                data: [30, 25, 20, 15, 10],
+                backgroundColor: [
+                  "rgba(180, 83, 9, 0.82)",
+                  "rgba(15, 118, 110, 0.82)",
+                  "rgba(2, 132, 199, 0.82)",
+                  "rgba(51, 65, 85, 0.82)",
+                  "rgba(100, 116, 139, 0.82)"
+                ],
+                borderColor: "#FFFFFF",
+                borderWidth: 2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              r: {
+                ticks: { display: false },
+                grid: { color: "#E2E8F0" }
+              }
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  boxWidth: 11,
+                  padding: 10,
+                  font: { size: 11, weight: "600" },
+                  color: "#334155"
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  title: (items) => {
+                    const lbl = items[0].label;
+                    return Array.isArray(lbl) ? lbl.join(" ") : lbl;
+                  },
+                  label: (ctx) => ` Official CKA Exam Weight: ${ctx.parsed.r}%`
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function initializeDashboard() {
+      updateGlobalHeaderKPIs();
+      renderStagesGrid();
+      renderCapstones();
+      renderCertifications();
+      initCharts();
+    }
+
+    document.querySelectorAll(".phase-filter-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activePhaseFilter = btn.getAttribute("data-phase");
+        document.querySelectorAll(".phase-filter-btn").forEach((b) => {
+          b.className =
+            "phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 text-slate-700 hover:bg-stone-200 cursor-pointer transition";
+        });
+        btn.className =
+          "phase-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-teal-700 text-white cursor-pointer transition";
+        renderStagesGrid();
+      });
+    });
+
+    document.getElementById("status-filter-select").addEventListener("change", (e) => {
+      activeStatusFilter = e.target.value;
+      renderStagesGrid();
+    });
+
+    document.getElementById("stage-search-input").addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      renderStagesGrid();
+    });
+
+    document.getElementById("btn-horizon-full").addEventListener("click", () => {
+      activeHorizon = "full";
+      document.getElementById("btn-horizon-full").className =
+        "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-teal-700 text-white shadow-2xs transition cursor-pointer";
+      document.getElementById("btn-horizon-2026").className =
+        "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition cursor-pointer";
+      document.getElementById("horizon-description").textContent =
+        "Full 175-Day (~6-Month) Intensive Roadmap: Nov 15, 2026 – May 8, 2027 across all 13 stages.";
+      initCharts();
+    });
+
+    document.getElementById("btn-horizon-2026").addEventListener("click", () => {
+      activeHorizon = "2026";
+      document.getElementById("btn-horizon-2026").className =
+        "px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-700 text-white shadow-2xs transition cursor-pointer";
+      document.getElementById("btn-horizon-full").className =
+        "px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-900 transition cursor-pointer";
+      document.getElementById("horizon-description").textContent =
+        "2026 Year-End Intensive Sprint (Nov 15 – Dec 26, 2026): Complete Stages 1–5 (Linux, Networking, Git, Scripting & Full AWS) before 2027.";
+      initCharts();
+    });
+
+    document.getElementById("open-report-modal-btn").addEventListener("click", openReportModal);
+    document.getElementById("quick-report-link").addEventListener("click", openReportModal);
+    document.getElementById("nav-report-btn").addEventListener("click", openReportModal);
+    document.getElementById("close-report-modal-btn").addEventListener("click", closeReportModal);
+
+    document.getElementById("export-json-btn").addEventListener("click", () => {
+      const payload = JSON.stringify(trackerState, null, 2);
+      const blob = new Blob([payload], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `jhn-devops-roadmap-progress-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("import-json-input").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          trackerState = normalizeTrackerState(imported);
+          persistState();
+          updateGlobalHeaderKPIs();
+          renderStagesGrid();
+          renderCapstones();
+          openReportModal();
+        } catch (error) {
+          console.error("Could not import roadmap progress.", error);
+          window.alert(`Could not import this progress file: ${error.message}`);
+        }
+      };
+      reader.onerror = () => {
+        window.alert("Could not read the selected progress file.");
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+
+    document.getElementById("print-report-btn").addEventListener("click", () => {
+      window.print();
+    });
+
+    document.getElementById("auth-login-form").addEventListener("submit", handleLogin);
+    document.getElementById("auth-signup-form").addEventListener("submit", handleSignup);
+    document.getElementById("show-signup-btn").addEventListener("click", () => {
+      document.getElementById("auth-login-form").classList.add("hidden");
+      document.getElementById("auth-signup-form").classList.remove("hidden");
+      document.getElementById("show-signup-btn").classList.add("hidden");
+      showAuthMessage("");
+    });
+    document.getElementById("sign-out-btn").addEventListener("click", () => {
+      lockTracker("You have signed out.");
+    });
+
+    document.getElementById("reset-all-progress-btn").addEventListener("click", (e) => {
+      if (!confirmResetArmed) {
+        confirmResetArmed = true;
+        e.target.textContent = "Click Again to Confirm Full Wipe";
+        e.target.className = "px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold cursor-pointer transition";
+        return;
+      }
+      confirmResetArmed = false;
+      trackerState = getDefaultState();
+      persistState();
+      updateGlobalHeaderKPIs();
+      renderStagesGrid();
+      renderCapstones();
+      openReportModal();
+    });
+
+    document.getElementById("stage-detail-modal").addEventListener("click", (e) => {
+      if (e.target.id === "stage-detail-modal") {
+        closeStageModal();
+      }
+    });
+
+    document.getElementById("report-modal").addEventListener("click", (e) => {
+      if (e.target.id === "report-modal") {
+        closeReportModal();
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (!document.getElementById("stage-detail-modal").classList.contains("hidden")) {
+          closeStageModal();
+        }
+        if (!document.getElementById("report-modal").classList.contains("hidden")) {
+          closeReportModal();
+        }
+      }
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible" && activeUser &&
+          Date.now() - activeSessionStartedAt >= SESSION_DURATION_MS) {
+        lockTracker("Your one-hour session has expired. Please sign in again.");
+      }
+    });
+
+    if (!authClient) {
+      showAuthMessage("Cloud login is not configured. Complete the Supabase setup guide first.", true);
+    }
+  </script>
+</body>
+</html>
