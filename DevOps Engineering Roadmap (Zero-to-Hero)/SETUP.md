@@ -12,7 +12,7 @@ The tracker uses Supabase for password authentication, private cloud storage, an
 6. In **Authentication → Sessions**, keep the access-token/JWT lifetime at **3600 seconds**. This is the Supabase default and is already configured for this project. The app ends its in-memory session after one hour and does not persist or refresh sign-in sessions. Supabase server-side session time-boxing requires a Pro plan; the app's one-hour timeout remains active on the current Free plan.
 7. Keep email confirmation enabled if you want Supabase to verify the account email. If enabled, confirm the email after creating the profile.
 
-The first profile can be created from the sign-in screen. Use the profile name `JH Nahid` and the email account you want to use on all devices. Once the intended profile exists, disable public sign-ups in Supabase Auth settings if this is a private tracker.
+The first profile can be created from the sign-in screen. Choose any profile name and use the email account you want to use on all devices. Once the intended profile exists, disable public sign-ups in Supabase Auth settings if this is a private tracker.
 
 ## 2. Deploy the site
 
