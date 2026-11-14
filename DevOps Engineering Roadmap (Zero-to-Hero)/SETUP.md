@@ -8,8 +8,8 @@ The tracker uses Supabase for password authentication, private cloud storage, an
 2. In the project's SQL Editor, run the contents of [`supabase-schema.sql`](./supabase-schema.sql).
 3. In **Project Settings → API**, copy the Project URL and the public anon/publishable key.
 4. The project URL and public publishable key you supplied are now configured in `index.html`. If you create a different Supabase project later, replace `SUPABASE_URL` and `SUPABASE_ANON_KEY` with that project's values. Never use a `service_role` or secret key in this page.
-5. In **Authentication → URL Configuration**, set the Site URL to the Vercel URL after deployment and add that URL to the allowed redirect URLs.
-6. In **Authentication → Settings**, set the access-token/JWT lifetime to **3600 seconds**. The page also ends its in-memory session after one hour and does not persist or refresh sign-in sessions.
+5. In **Authentication → URL Configuration**, set the Site URL to the Vercel URL and add that URL to the allowed redirect URLs. This project's production URL is `https://devops-engineering-roadmap.vercel.app`.
+6. In **Authentication → Sessions**, keep the access-token/JWT lifetime at **3600 seconds**. This is the Supabase default and is already configured for this project. The app ends its in-memory session after one hour and does not persist or refresh sign-in sessions. Supabase server-side session time-boxing requires a Pro plan; the app's one-hour timeout remains active on the current Free plan.
 7. Keep email confirmation enabled if you want Supabase to verify the account email. If enabled, confirm the email after creating the profile.
 
 The first profile can be created from the sign-in screen. Use the profile name `JH Nahid` and the email account you want to use on all devices. Once the intended profile exists, disable public sign-ups in Supabase Auth settings if this is a private tracker.
@@ -27,11 +27,11 @@ JHN-Career-Roadmap/
     └── README.md
 ```
 
-The supplied GitHub repository is currently empty, so it needs an initial push before Vercel can import it. Put this project folder in the repository root with the exact name shown above, then push it to the repository's `main` branch.
+The project is already committed to the `main` branch of `PhantomBeast-Official/JHN-Career-Roadmap` in the folder shown above.
 
-In Vercel, create a project and import `PhantomBeast-Official/JHN-Career-Roadmap`. Set **Root Directory** to `DevOps Engineering Roadmap (Zero-to-Hero)`, use the **Other** framework preset, and leave the build command empty. `index.html` is the entry point. Deploy the project; Vercel will serve this roadmap at the project's domain root.
+The Vercel project is deployed from `PhantomBeast-Official/JHN-Career-Roadmap` with **Root Directory** set to `DevOps Engineering Roadmap (Zero-to-Hero)`, the **Other** framework preset, and no build command. `index.html` is served at [https://devops-engineering-roadmap.vercel.app](https://devops-engineering-roadmap.vercel.app). New commits to `main` automatically trigger deployments.
 
-For each future independent roadmap website, add another ordinary folder to the same GitHub repository and create another Vercel project from that repository, selecting that website's folder as its **Root Directory**. Each Vercel project gets its own URL. After the first deployment, set this site's Vercel URL in Supabase **Authentication → URL Configuration**. Open that URL on each phone or computer and sign in to the same Supabase account.
+For each future independent roadmap website, add another ordinary folder to the same GitHub repository and create another Vercel project from that repository, selecting that website's folder as its **Root Directory**. Each Vercel project gets its own URL.
 
 Changes are saved to Supabase and subscribed devices receive live updates. The browser also keeps a per-account local cache, but the cloud row is authoritative. If two devices edit at exactly the same time, the most recent full-state save wins.
 
